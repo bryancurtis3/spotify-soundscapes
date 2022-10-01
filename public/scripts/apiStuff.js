@@ -14,14 +14,6 @@ function getHashParams() {
     return hashParams;
 }
 
-// var userProfileSource = document.getElementById('user-profile-template').innerHTML,
-//     userProfileTemplate = Handlebars.compile(userProfileSource),
-//     userProfilePlaceholder = document.getElementById('user-profile');
-
-// var oauthSource = document.getElementById('oauth-template').innerHTML,
-//     oauthTemplate = Handlebars.compile(oauthSource),
-//     oauthPlaceholder = document.getElementById('oauth');
-
 var params = getHashParams();
 
 var access_token = params.access_token,
@@ -40,7 +32,7 @@ if (access_token) {
     // });
 
     $.ajax({
-        url: 'https://api.spotify.com/v1/me/top/artists',
+        url: 'https://api.spotify.com/v1/me/top/artists?limit=50',
         headers: {
         'Authorization': 'Bearer ' + access_token
         },
@@ -50,36 +42,57 @@ if (access_token) {
             // Get Average Popularity
             let popularity = 0;
             console.log(response.item);
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 50; i++) {
                 popularity += response.items[i].popularity;
             }
             popularity = popularity / 20;
             console.log(popularity);
 
-            // Genres
+            // ===== Genres =====
+
+            // Extract data from JSON
             let genres = [];
-            for (let i = 0; i < 20; i++) {
+            let artistData = [];
+            for (let i = 0; i < 50; i++) {
+
+                artistData.push(response.items[i].name);
+
                 for (let j = 0; j < response.items[i].genres.length; j++) {
                     genres.push(response.items[i].genres[j]);
                 }
             }
 
+            const artists = {};
+            let artistIterator = 0;
+            
+            for (const artist of artistData) {
+                artists[artist] = response.items[artistIterator].genres
+                artistIterator++;
+            }
+            console.log(artists);
+            
             const genreStats = {};
             for (const genre of genres) {
                 genreStats[genre] = genreStats[genre] ? genreStats[genre] + 1 : 1;
             }
+            console.log(genreStats);
 
-            let mostGenres = Object.values(genreStats).sort().reverse().splice(0, 5);
+            let mostGenres = Object.values(genreStats)
+            .sort((function(a, b) {return a - b;}))
+            .reverse()
+            .splice(0, 5);
+            console.log(mostGenres);
 
-
+            
             const topGenres = {}
             for (const genre in genreStats) {
-                for (let i = 0; i < 5; i++) {
+                for (let i = 0; i < mostGenres.length; i++) {
                     if (genreStats[genre] === mostGenres[i]) {
                         topGenres[genre] = mostGenres[i];
-                    }
-                }
-            }
+                        mostGenres.splice(i, 1);
+                    };
+                };
+            };
             console.log(topGenres);
 
 
@@ -108,30 +121,57 @@ if (access_token) {
                             label: 'My First Dataset',
                             data: Object.values(topGenres),
                             backgroundColor: [
-                                'rgb(255, 99, 132)',
-                                'rgb(54, 162, 235)',
-                                'rgb(255, 205, 86)',
+                                'rgb(130, 110, 230)',
                                 'rgb(15, 208, 102)',
-                                'rgb(130, 110, 230)'
+                                'rgb(255, 205, 86)',
+                                'rgb(54, 162, 235)',
+                                'rgb(255, 99, 132)'
                             ],
-                            hoverOffset: 4
+                            hoverOffset: 20,
+                            hoverBorderJoinStyle: 'round',
                         }]
                     },
+                    options: {
+                        layout: {
+                            padding: 10
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Your Favorite Genres'
+                            }
+                        }
+                    }
                 });
             }
             genreChart();
+
+
+
         }
     });
 
     // ======== TOP CODE =========
     $.ajax({
-        url: 'https://api.spotify.com/v1/me/top/tracks',
+        url: 'https://api.spotify.com/v1/me/top/tracks?limit=50',
         headers: {
         'Authorization': 'Bearer ' + access_token
         },
         success: function(response) {
             console.log(response);
             $("#test").text(response.items[0].name);
+
+
+            let songs = [];
+            for (let i = 0; i < 50; i++) {
+                songs.push(response.items[i].name);
+            };
+            console.log(songs);
+
+            // const songsGenreData = {};
+            // for (const song of songs) {
+            //     genreStats[genre] = genreStats[genre] ? genreStats[genre] + 1 : 1;
+            // }
         }
     });
     // ==========================
