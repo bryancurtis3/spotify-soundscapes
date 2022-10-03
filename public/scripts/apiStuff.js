@@ -35,7 +35,17 @@ alert('There was an error during the authentication');
         const artistsGenres = {};
         const topGenres = {}
 
+        // 0V18Ybdh9dNcNEZTnrFliH
 
+        $.ajax({
+            url: 'https://api.spotify.com/v1/artists/1moxjboGR7GNWYIMWsRjgG',
+            headers: {
+            'Authorization': 'Bearer ' + access_token
+            },
+            success: function(response) {
+                console.log(response);
+            }
+        }),
         $.ajax({
             url: 'https://api.spotify.com/v1/me/top/artists?limit=50',
             headers: {
@@ -46,11 +56,10 @@ alert('There was an error during the authentication');
 
                 // Get Average Popularity
                 let popularity = 0;
-                console.log(response.item);
                 for (let i = 0; i < 50; i++) {
                     popularity += response.items[i].popularity;
                 }
-                popularity = popularity / 20;
+                popularity = popularity / 50;
                 console.log(popularity);
 
                 // ===== Genres =====
@@ -83,7 +92,7 @@ alert('There was an error during the authentication');
                 let mostGenres = Object.values(genreStats)
                 .sort((function(a, b) {return a - b;}))
                 .reverse()
-                .splice(0, 5);
+                .splice(0, 8);
                 console.log(mostGenres);
 
                 
@@ -97,7 +106,7 @@ alert('There was an error during the authentication');
                 };
                 console.log(topGenres);
 
-                
+
 
                 const genreChart = function genreChart() {
                     const ctx = document.getElementById('genreChart').getContext('2d');
@@ -111,23 +120,30 @@ alert('There was an error during the authentication');
                                 data: Object.values(topGenres),
                                 backgroundColor: [
                                     'rgb(130, 110, 230)',
+                                    'rgb(255, 100, 100)',
                                     'rgb(15, 208, 102)',
+                                    'rgb(220, 100, 220)',
                                     'rgb(255, 205, 86)',
                                     'rgb(54, 162, 235)',
-                                    'rgb(255, 99, 132)'
+                                    'rgb(245, 70, 142)',
+                                    'rgb(100, 220, 220)',
+
+
+
                                 ],
                                 hoverOffset: 20,
                                 hoverBorderJoinStyle: 'round',
                             }]
                         },
                         options: {
-                            layout: {
-                                padding: 10
-                            },
                             plugins: {
+                                // Take this out XXXXX
                                 title: {
                                     display: true,
                                     text: 'Your Favorite Genres'
+                                },
+                                legend: {
+                                    position: 'bottom'
                                 }
                             }
                         }
@@ -168,39 +184,51 @@ alert('There was an error during the authentication');
                 // Check if artist is already there, add song to array of existing songs, calculate number of songs as 'length'
                 // Also a seperate object just for song counts because that is the easiest way to pass it to Chart.js :|
                 // NOTE == Consider taking length back out of artistSongs if I don't end up using it
+                // UPDATE == This is now capped at 15 artists (subject to change) but technically still only capped at 50 songs max
                 const artistSongs = {}
                 const chartSongCounts = {};
                 for (let i = 0; i < artists.length; i++) {
-
                     let artist = artists[i];
 
-                    if (artist in artistSongs) {
-                        artistSongs[artist].songs.push(songs[i])
-                        chartSongCounts[artist] = artistSongs[artist].songs.length;
-
-                    } else {
-                        artistSongs[artist] = {'songs': [songs[i]], 'length': 0};
-                        chartSongCounts[artist] = artistSongs[artist].songs.length;
-                    }
-                    artistSongs[artist].length = artistSongs[artist].songs.length;
+                    if (Object.keys(chartSongCounts).length < 15 || artist in chartSongCounts) {
+                        if (artist in artistSongs) {
+                            artistSongs[artist].songs.push(songs[i])
+                            chartSongCounts[artist] = artistSongs[artist].songs.length;
+                        } else {
+                            artistSongs[artist] = {'songs': [songs[i]], 'length': 0};
+                            chartSongCounts[artist] = artistSongs[artist].songs.length;
+                        }
+                        artistSongs[artist].length = artistSongs[artist].songs.length;
+                    } 
                 }
+                console.log(chartSongCounts);
                 console.log(artistSongs); 
+                console.log(topGenres);
 
-                console.log(topGenres)
 
                 // NOTE - What have I done
                 // This takes a ton of objects and compares them all to find which artists from the top artists overlap with artists from the top tracks, at which point it finds the genres of those artists that do overlap, but (hopefully) only if the genre is one of the 5 top genres
                 // Compiles an object of with a single genre for each object to be fed to ChartJS, all just to color the bars
                 const barChartGenreData = {};
-                for (artist in artistsGenres) {
-                    if (artist in artistSongs) {
+                
+                console.log(artistsGenres)
+                let barIterator = 0;
+                for (artist in artistSongs) {
+                    barIterator++;
+                    if (artist in artistsGenres && barIterator <= 20) {
+                        console.log(barIterator);
                         for (let i = 0; i < artistsGenres[artist].length; i++) {
-                            for (let j = 0; j < 5; j++) {
-                                if (artistsGenres[artist][i] == Object.keys(topGenres)[j]) {
+                            for (let j = 0; j < Object.keys(topGenres).length; j++) {
+                                // redundant exceptions here but leaving it for now
+                                if (artistsGenres[artist][i] == Object.keys(topGenres)[j] && !(artist in barChartGenreData)) {
                                     barChartGenreData[artist] = barChartGenreData[artist] ? barChartGenreData[artist] : artistsGenres[artist][i];
-                                    // console.log(artistsGenres[artist][i]);
                                 }
                             }
+                        }
+                        // console.log(!(artist in barChartGenreData));
+                        if (!(artist in barChartGenreData)) {
+                            barChartGenreData[artist] = artistsGenres[artist][0];
+                            // console.log(barChartGenreData)
                         }
                     }
                 }
@@ -208,34 +236,29 @@ alert('There was an error during the authentication');
 
                 // Seperating this rather than adding it to the rat's nest
                 let genreColors = [];
-                for (artist in artistSongs) {
-                    
-                    // if (artist in barChartGenreData) {
-                        // console.log(barChartGenreData[artist]);
-                        // console.log(Object.keys(topGenres)[0]);
-                        if (barChartGenreData[artist] == Object.keys(topGenres)[0]) {
-                            barChartGenreData[artist] = 'rgb(130, 110, 230, .7)';
-                        } else if (barChartGenreData[artist] == Object.keys(topGenres)[1]) { 
-                            barChartGenreData[artist] = 'rgb(15, 208, 102, .7)';
-                        } else if (barChartGenreData[artist] == Object.keys(topGenres)[2]) { 
-                            barChartGenreData[artist] = 'rgb(255, 205, 86, .7)';
-                        } else if (barChartGenreData[artist] == Object.keys(topGenres)[3]) { 
-                            barChartGenreData[artist] = 'rgb(54, 162, 235, .7)';
-                        } else if (barChartGenreData[artist] == Object.keys(topGenres)[4]) { 
-                            barChartGenreData[artist] = 'rgb(255, 99, 132, .7)';
-                        } else {
-                            barChartGenreData[artist] = 'rgb(80, 80, 80, .7)'
-                        }
-                    // }
-
-                    // for (let i = 0; i < 5; i++) {
-                    //     if (barChartGenreData.artist == Object.keys(topGenres)[i]) {
-                    //         genreColors[i] = 'rgb(130, 110, 230)'
-                    //     }
-                    // }
+                for (artist in chartSongCounts) {
+                    if (barChartGenreData[artist] == Object.keys(topGenres)[0]) {
+                        barChartGenreData[artist] = 'rgb(130, 110, 230, .7)';
+                    } else if (barChartGenreData[artist] == Object.keys(topGenres)[1]) { 
+                        barChartGenreData[artist] = 'rgba(255, 100, 100,.7)';
+                    } else if (barChartGenreData[artist] == Object.keys(topGenres)[2]) { 
+                        barChartGenreData[artist] = 'rgb(15, 208, 102, .7)';
+                    } else if (barChartGenreData[artist] == Object.keys(topGenres)[3]) { 
+                        barChartGenreData[artist] = 'rgb(220, 100, 220, .7)';
+                    } else if (barChartGenreData[artist] == Object.keys(topGenres)[4]) { 
+                        barChartGenreData[artist] = 'rgb(255, 205, 86, .7)';
+                    } else if (barChartGenreData[artist] == Object.keys(topGenres)[5]) { 
+                        barChartGenreData[artist] = 'rgb(54, 162, 235, .7)';
+                    } else if (barChartGenreData[artist] == Object.keys(topGenres)[6]) { 
+                        barChartGenreData[artist] = 'rgb(245, 70, 142, .7)';
+                    } else if (barChartGenreData[artist] == Object.keys(topGenres)[7]) { 
+                        barChartGenreData[artist] = 'rgb(100, 220, 220, .7)';
+                    } else {
+                        barChartGenreData[artist] = 'rgb(80, 80, 80, .7)'
+                    }
                 }
                 console.log(barChartGenreData);
-
+                console.log(chartSongCounts);
 
 
                 // Bar Chart
