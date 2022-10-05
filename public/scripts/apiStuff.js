@@ -33,7 +33,8 @@ alert('There was an error during the authentication');
 
         // Scope widened to share data between API calls
         const artistsGenres = {};
-        const topGenres = {}
+        const topGenres = {};
+        let colors = {};
 
         // 0V18Ybdh9dNcNEZTnrFliH
 
@@ -107,7 +108,16 @@ alert('There was an error during the authentication');
                 console.log(topGenres);
 
 
-
+                colors = {
+                    green: 'rgb(45, 208, 112)',
+                    purple: 'rgb(130, 120, 230)',
+                    gold: 'rgb(255, 205, 86)',
+                    pink: 'rgb(240, 140, 240)',
+                    blue: 'rgb(54, 162, 235)',
+                    folklore: 'rgb(255, 120, 120)',
+                    lightBlue: 'rgb(142, 200, 255)',
+                    orange: 'rgb(251, 145, 90)'
+                }
                 const genreChart = function genreChart() {
                     const ctx = document.getElementById('genreChart').getContext('2d');
                 
@@ -116,21 +126,9 @@ alert('There was an error during the authentication');
                         data: {
                             labels: Object.keys(topGenres),
                             datasets: [{
-                                label: 'My First Dataset',
+                                label: 'Top Artist Genres',
                                 data: Object.values(topGenres),
-                                backgroundColor: [
-                                    'rgb(130, 110, 230)',
-                                    'rgb(255, 100, 100)',
-                                    'rgb(15, 208, 102)',
-                                    'rgb(220, 100, 220)',
-                                    'rgb(255, 205, 86)',
-                                    'rgb(54, 162, 235)',
-                                    'rgb(245, 70, 142)',
-                                    'rgb(100, 220, 220)',
-
-
-
-                                ],
+                                backgroundColor: Object.values(colors),
                                 hoverOffset: 20,
                                 hoverBorderJoinStyle: 'round',
                             }]
@@ -187,10 +185,11 @@ alert('There was an error during the authentication');
                 // UPDATE == This is now capped at 15 artists (subject to change) but technically still only capped at 50 songs max
                 const artistSongs = {}
                 const chartSongCounts = {};
+                
                 for (let i = 0; i < artists.length; i++) {
                     let artist = artists[i];
 
-                    if (Object.keys(chartSongCounts).length < 15 || artist in chartSongCounts) {
+                    if (Object.keys(chartSongCounts).length < 50 || artist in chartSongCounts) {
                         if (artist in artistSongs) {
                             artistSongs[artist].songs.push(songs[i])
                             chartSongCounts[artist] = artistSongs[artist].songs.length;
@@ -207,77 +206,82 @@ alert('There was an error during the authentication');
 
 
                 // NOTE - What have I done
-                // This takes a ton of objects and compares them all to find which artists from the top artists overlap with artists from the top tracks, at which point it finds the genres of those artists that do overlap, but (hopefully) only if the genre is one of the 5 top genres
-                // Compiles an object of with a single genre for each object to be fed to ChartJS, all just to color the bars
-                const barChartGenreData = {};
+                // This takes a ton of objects and compares them all to find which artists from the top artists overlap with artists from the top tracks, at which point it finds the genres of those artists that do overlap, but (hopefully) only if the genre is one of the *8 top genres
+                // Compiles an object with a single genre for each artist to be fed to ChartJS, all just to color the bars
+                const barData = {};
                 
                 console.log(artistsGenres)
                 let barIterator = 0;
                 for (artist in artistSongs) {
                     barIterator++;
-                    if (artist in artistsGenres && barIterator <= 20) {
-                        console.log(barIterator);
+                    if (artist in artistsGenres && barIterator <= Object.keys(chartSongCounts).length) {
                         for (let i = 0; i < artistsGenres[artist].length; i++) {
                             for (let j = 0; j < Object.keys(topGenres).length; j++) {
-                                // redundant exceptions here but leaving it for now
-                                if (artistsGenres[artist][i] == Object.keys(topGenres)[j] && !(artist in barChartGenreData)) {
-                                    barChartGenreData[artist] = barChartGenreData[artist] ? barChartGenreData[artist] : artistsGenres[artist][i];
+                                // Ensuring the artist hasn't already been added and then adding the artist with their first genre that cooresponds to one of eight top genres
+                                if (artistsGenres[artist][i] == Object.keys(topGenres)[j] && !(artist in barData)) {
+                                    barData[artist] = artistsGenres[artist][i];
                                 }
                             }
                         }
-                        // console.log(!(artist in barChartGenreData));
-                        if (!(artist in barChartGenreData)) {
-                            barChartGenreData[artist] = artistsGenres[artist][0];
-                            // console.log(barChartGenreData)
+                        if (!(artist in barData)) {
+                            barData[artist] = artistsGenres[artist][0];
                         }
                     }
                 }
-                console.log(barChartGenreData);
+                console.log(barData);
 
                 // Seperating this rather than adding it to the rat's nest
-                let genreColors = [];
+                let barColors = Object.values(colors).map(color => color.slice(0, -1)  + ', .7)');
                 for (artist in chartSongCounts) {
-                    if (barChartGenreData[artist] == Object.keys(topGenres)[0]) {
-                        barChartGenreData[artist] = 'rgb(130, 110, 230, .7)';
-                    } else if (barChartGenreData[artist] == Object.keys(topGenres)[1]) { 
-                        barChartGenreData[artist] = 'rgba(255, 100, 100,.7)';
-                    } else if (barChartGenreData[artist] == Object.keys(topGenres)[2]) { 
-                        barChartGenreData[artist] = 'rgb(15, 208, 102, .7)';
-                    } else if (barChartGenreData[artist] == Object.keys(topGenres)[3]) { 
-                        barChartGenreData[artist] = 'rgb(220, 100, 220, .7)';
-                    } else if (barChartGenreData[artist] == Object.keys(topGenres)[4]) { 
-                        barChartGenreData[artist] = 'rgb(255, 205, 86, .7)';
-                    } else if (barChartGenreData[artist] == Object.keys(topGenres)[5]) { 
-                        barChartGenreData[artist] = 'rgb(54, 162, 235, .7)';
-                    } else if (barChartGenreData[artist] == Object.keys(topGenres)[6]) { 
-                        barChartGenreData[artist] = 'rgb(245, 70, 142, .7)';
-                    } else if (barChartGenreData[artist] == Object.keys(topGenres)[7]) { 
-                        barChartGenreData[artist] = 'rgb(100, 220, 220, .7)';
-                    } else {
-                        barChartGenreData[artist] = 'rgb(80, 80, 80, .7)'
+                    for (let i = 0; i < barColors.length; i++) {
+                        if (barData[artist] == Object.keys(topGenres)[i]) {
+                            barData[artist] = barColors[i]; 
+                        } 
+                    }
+                    // Checks for uncolored genres and assigns them the 'other' color
+                    if (barData[artist] !== undefined && barData[artist].slice(0, 4) !== 'rgb(') {
+                        barData[artist] = 'rgb(80, 80, 80, .7)';
                     }
                 }
-                console.log(barChartGenreData);
+                console.log(Object.values(barData));
                 console.log(chartSongCounts);
 
+                // Last little check to limit graph size to *15
+                let barTotal = Object.keys(artistSongs).length;
+                if (barTotal > 15) barTotal = 15;
 
                 // Bar Chart
+
                 const artistSongsChart = function artistSongsChart() {
                     const ctx = document.getElementById('artistSongsChart').getContext('2d');
 
+                    
                     const data = {
-                        labels: Object.keys(artistSongs),
+                        labels: Object.keys(artistSongs).slice(0, barTotal),
                         datasets: [{
-                            data: Object.values(chartSongCounts),
-                            backgroundColor: Object.values(barChartGenreData),
-                            borderColor: Object.values(barChartGenreData),
+                            data: Object.values(chartSongCounts).slice(0, barTotal),
+                            backgroundColor: Object.values(barData),
+                            borderColor: Object.values(barData),
                             borderWidth: 1
                         }]
                     };
-                    const genreChart = new Chart(ctx, {
+                    let delayed;
+                    const barChart = new Chart(ctx, {
                         type: 'bar',
                         data: data,
                         options: {
+                            animation: {
+                                onComplete: () => {
+                                  delayed = true;
+                                },
+                                delay: (context) => {
+                                  let delay = 0;
+                                  if (context.type === 'data' && context.mode === 'default' && !delayed) {
+                                    delay = context.dataIndex * 200 + context.datasetIndex * 100;
+                                  }
+                                  return delay;
+                                },
+                            },
                             scales: {
                                 y: {
                                     beginAtZero: true,
