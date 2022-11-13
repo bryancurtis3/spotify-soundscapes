@@ -2,9 +2,34 @@
   box-sizing: border-box;
 }
 
-#genreChart:active {
-  transition: 1s ease-in-out;
-  transform: rotate(360deg);
+body, html {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+main {
+  display: grid;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  padding: 0 20px;
+}
+
+.chart-container {
+  width: calc(100vw - 40px);
+  max-width: 600px;
+}
+.chart-container #artistSongsChart {
+  min-height: 400px !important;
+  width: 100% !important;
+}
+
+@media only screen and (max-width: 450px) {
+  .chart-container {
+    width: auto;
+    max-width: none;
+  }
 }
 
 /*# sourceMappingURL=index.css.map */

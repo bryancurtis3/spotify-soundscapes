@@ -135,14 +135,21 @@ alert('There was an error during the authentication');
                             }]
                         },
                         options: {
+                            maintainAspectRation: false,
                             plugins: {
-                                // Take this out XXXXX
-                                title: {
-                                    display: true,
-                                    text: 'Your Favorite Genres'
-                                },
+                                // TODO Take this out XXXXX
+                                // title: {
+                                //     display: true,
+                                //     text: 'Your Favorite Genres'
+                                // },
                                 legend: {
-                                    position: 'bottom'
+                                    position: 'bottom',
+                                    labels: {
+                                        font: {
+                                            size: 16
+                                        },
+                                        usePointStyle: true,
+                                    }
                                 }
                             }
                         }
@@ -255,20 +262,31 @@ alert('There was an error during the authentication');
                 // Last little check to limit graph size to *15
                 let barTotal = Object.keys(artistSongs).length;
                 if (barTotal > 15) barTotal = 15;
+                
+                // Custom shortened labels for better UX on mobile
+                let barLabels = Object.keys(artistSongs).slice(0, barTotal);
+                
+                for (let i = 0; i < barLabels.length; i++) {
+                    if (barLabels[i].length > 11) {
+                        barLabels[i] = barLabels[i].substring(0, 10) + "...";
+                    }
+                }
+                console.log(barLabels);
 
                 // Bar Chart
-
+                console.log(artistSongs)
                 const artistSongsChart = function artistSongsChart() {
                     const ctx = document.getElementById('artistSongsChart').getContext('2d');
 
                     
                     const data = {
-                        labels: Object.keys(artistSongs).slice(0, barTotal),
+                        labels: barLabels,
                         datasets: [{
                             data: Object.values(chartSongCounts).slice(0, barTotal),
                             backgroundColor: Object.values(barData),
                             borderColor: Object.values(barData),
-                            borderWidth: 1
+                            borderWidth: 1,
+                            borderRadius: 4
                         }]
                     };
                     let delayed;
@@ -276,6 +294,9 @@ alert('There was an error during the authentication');
                         type: 'bar',
                         data: data,
                         options: {
+                            responsive: false,
+                            // maintainAspectRation: false,
+                            indexAxis: 'y',
                             animation: {
                                 onComplete: () => {
                                   delayed = true;
@@ -289,12 +310,20 @@ alert('There was an error during the authentication');
                                 },
                             },
                             scales: {
-                                y: {
+                                x: {
                                     beginAtZero: true,
                                     title: {
                                         display: true,
                                         text: '# of songs'
                                     }
+                                },
+                                y: {
+                                    ticks: {
+                                        autoSkip: false,
+                                        font: {
+                                            size: 16    
+                                        }
+                                    },
                                 }
                             },
                             plugins: {

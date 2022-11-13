@@ -1,6 +1,9 @@
 <!doctype html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotify Data App</title>
 
 
@@ -18,16 +21,18 @@
 </head>
 
 <body>
-    <a href="/login" id="login">Login</a>
+    <main>
+        <a href="/login" id="login">Login</a>
+    
+        <div class="chart-container">
+            <canvas id="genreChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="artistSongsChart" style="height: 650px;"></canvas>
+        </div>
+    
+        <div id="test"></div>
 
-    <div class="chart-container">
-        <canvas id="genreChart"></canvas>
-    </div>
-    <div class="chart-container">
-        <canvas id="artistSongsChart"></canvas>
-    </div>
-
-    <div id="test"></div>
+    </main>
 </body>
 </html>
-

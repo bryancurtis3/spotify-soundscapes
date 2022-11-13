@@ -2,9 +2,50 @@
     box-sizing: border-box;
 }
 
+body, html {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+}
+
+main {
+    display: grid;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    padding: 0 20px;
+}
+
 #genreChart {
-    &:active {
-        transition: 1s ease-in-out;
-        transform: rotate(360deg);
+    // &:active {
+    //     transition: 1s ease-in-out;
+    //     transform: rotate(360deg);
+    // }
+}
+
+.chart-container {
+    // width: 100%;
+    width: calc(100vw - 40px);
+    max-width: 600px;
+
+    canvas {
+        // max-height: 100%;
+    }
+
+    #artistSongsChart {
+        min-height: 400px!important;
+        width: 100%!important;
+        // padding: 0 20px
+    }
+}
+
+@media only screen and (max-width: 450px) {
+    .chart-container {
+        width: auto;
+        max-width: none;
+
+        #genreChart {
+            // height: 500px!important;
+        }
     }
 }
