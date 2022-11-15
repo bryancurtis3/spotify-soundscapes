@@ -25,6 +25,7 @@ alert('There was an error during the authentication');
 
 } else {
     if (access_token) {
+        // TODO remove this
         // render oauth info
         // oauthPlaceholder.innerHTML = oauthTemplate({
         // access_token: access_token,
@@ -35,18 +36,25 @@ alert('There was an error during the authentication');
         const artistsGenres = {};
         const topGenres = {};
         let colors = {};
+        let songIds= '';
 
         // 0V18Ybdh9dNcNEZTnrFliH
+        // TODO figure out this bar graph colors bug that I have suspected is possibly related to needing async, this example stays here to remind me I tried
+        async function doAjax(access_token) {
+            const result = await $.ajax({
+                url: 'https://api.spotify.com/v1/artists/1moxjboGR7GNWYIMWsRjgG',
+                headers: {
+                'Authorization': 'Bearer ' + access_token
+                },
+                success: function(response) {
+                    console.log(response);
+                }
+            })
+            return result;
 
-        $.ajax({
-            url: 'https://api.spotify.com/v1/artists/1moxjboGR7GNWYIMWsRjgG',
-            headers: {
-            'Authorization': 'Bearer ' + access_token
-            },
-            success: function(response) {
-                console.log(response);
-            }
-        }),
+        }
+        doAjax(access_token);
+
         $.ajax({
             url: 'https://api.spotify.com/v1/me/top/artists?limit=50',
             headers: {
@@ -159,10 +167,12 @@ alert('There was an error during the authentication');
 
 
 
-            }
+            },
+            async: false
         });
 
         // ======== TRACK CODE =========
+        console.log("Bar Graph Code Next");
         $.ajax({
             url: 'https://api.spotify.com/v1/me/top/tracks?limit=50',
             headers: {
@@ -170,21 +180,21 @@ alert('There was an error during the authentication');
             },
             success: function(response) {
                 console.log(response);
+                // TODO take this out but its sentimental
                 $("#test").text(response.items[0].name);
-
 
                 let songs = [];
                 let artists = [];
                 for (let i = 0; i < 50; i++) {
                     songs.push(response.items[i].name);
                     artists.push(response.items[i].album.artists[0].name);
-
+                    songIds += response.items[i].id + ',';
                 };
+                songIds = songIds.slice(0, -1);
                 // console.log(songs);
+                console.log(songIds);
                 console.log(artists);
                 console.log(artistsGenres);
-
-
                 
 
                 // Check if artist is already there, add song to array of existing songs, calculate number of songs as 'length'
@@ -241,28 +251,12 @@ alert('There was an error during the authentication');
                 console.log(barData);
 
 
-                // ===== OLD CODE DELETE IF NOTHING BREAKS IN THE NEAR FUTURE =====
-
-                // Seperating this rather than adding it to the rat's nest
-                // let barColors = Object.values(colors).map(color => color.slice(0, -1)  + ', .7)');
-                // for (artist in chartSongCounts) {
-                //     for (let i = 0; i < barColors.length; i++) {
-                //         if (barData[artist] == Object.keys(topGenres)[i]) {
-                //             barData[artist] = barColors[i]; 
-                //         } 
-                //     }
-                //     // Checks for uncolored genres and assigns them the 'other' color
-                //     if (barData[artist] !== undefined && barData[artist].slice(0, 4) !== 'rgb(') {
-                //         barData[artist] = 'rgb(80, 80, 80, .7)';
-                //     }
-                // }
-                // console.log(Object.values(barData));
-                // console.log(chartSongCounts);
 
                 // Last little check to limit graph size to *15
                 let barTotal = Object.keys(artistSongs).length;
                 if (barTotal > 15) barTotal = 15;
                 
+                // TODO remove this, made redundant after callback for un-truncated tooltip
                 // Custom shortened labels for better UX on mobile
                 let barLabels = Object.keys(artistSongs).slice(0, barTotal);
                 
@@ -274,15 +268,30 @@ alert('There was an error during the authentication');
                 console.log(barLabels);
 
                 // Bar Chart
+
+                // Custom tooltip function
+                const tooltipLabels = Object.values(artistSongs);
+                let tooltipSongs = [];
+                const footer = (tooltipItems) => {
+                  
+                    tooltipItems.forEach(function(tooltipItem) {
+                        labelSongs = tooltipLabels[tooltipItem.parsed.y].songs;
+                    });
+
+                    console.log(tooltipSongs);
+                    return labelSongs;
+                };
+
                 console.log(artistSongs)
                 const artistSongsChart = function artistSongsChart() {
                     const ctx = document.getElementById('artistSongsChart').getContext('2d');
 
                     
                     const data = {
-                        labels: barLabels,
+                        labels: Object.keys(artistSongs).slice(0, barTotal),
                         datasets: [{
                             data: Object.values(chartSongCounts).slice(0, barTotal),
+                            label: "Songs",
                             backgroundColor: Object.values(barData),
                             borderColor: Object.values(barData),
                             borderWidth: 1,
@@ -295,7 +304,6 @@ alert('There was an error during the authentication');
                         data: data,
                         options: {
                             responsive: false,
-                            // maintainAspectRation: false,
                             indexAxis: 'y',
                             animation: {
                                 onComplete: () => {
@@ -315,6 +323,9 @@ alert('There was an error during the authentication');
                                     title: {
                                         display: true,
                                         text: '# of songs'
+                                    },
+                                    grid: {
+                                        display: false
                                     }
                                 },
                                 y: {
@@ -322,13 +333,24 @@ alert('There was an error during the authentication');
                                         autoSkip: false,
                                         font: {
                                             size: 16    
+                                        },
+                                        callback: function(value) {
+                                            return this.getLabelForValue(value).substr(0, 10) + "..."
                                         }
+                                        // mirror: true,
+                                        // z: 1,
+                                        // color: 'black',
                                     },
                                 }
                             },
                             plugins: {
                                 legend: {
                                     display: false
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        footer: footer,
+                                    }
                                 }
                             }
                         },
@@ -337,9 +359,22 @@ alert('There was an error during the authentication');
                 artistSongsChart();
 
 
-            }
+            },
+            async: false
+
         });
         // ==========================
+
+        // NOTE Redoing "audio features" test
+        $.ajax({
+            url: `https://api.spotify.com/v1/audio-features?ids=${songIds}`,
+            headers: {
+            'Authorization': 'Bearer ' + access_token
+            },
+            success: function(response) {
+                console.log(response);
+            }
+        })
 
         $('#login').hide();
 
@@ -348,25 +383,26 @@ alert('There was an error during the authentication');
         $('#login').show();
         $('#loggedin').hide();
     };
+    
+
+    console.log("Track Code Done");
 
 
 
-
-
-// Original token refresher
-// document.getElementById('obtain-new-token').addEventListener('click', function() {
-//     $.ajax({
-//     url: '/refresh_token',
-//     data: {
-//         'refresh_token': refresh_token
-//     }
-//     }).done(function(data) {
-//         // ====== console.log("Token Data: " + data);
-//         access_token = data.access_token;
-//         oauthPlaceholder.innerHTML = oauthTemplate({
-//             access_token: access_token,
-//             refresh_token: refresh_token
-//         });
-//     });
-// }, false);
+    // Original token refresher
+    // document.getElementById('obtain-new-token').addEventListener('click', function() {
+    //     $.ajax({
+    //     url: '/refresh_token',
+    //     data: {
+    //         'refresh_token': refresh_token
+    //     }
+    //     }).done(function(data) {
+    //         // ====== console.log("Token Data: " + data);
+    //         access_token = data.access_token;
+    //         oauthPlaceholder.innerHTML = oauthTemplate({
+    //             access_token: access_token,
+    //             refresh_token: refresh_token
+    //         });
+    //     });
+    // }, false);
 }
