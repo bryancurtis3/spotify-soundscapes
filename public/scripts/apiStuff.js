@@ -25,6 +25,9 @@ alert('There was an error during the authentication');
 
 } else {
     if (access_token) {
+
+        $('#login').hide();
+
         // TODO remove this
         // render oauth info
         // oauthPlaceholder.innerHTML = oauthTemplate({
@@ -37,8 +40,7 @@ alert('There was an error during the authentication');
         const topGenres = {};
         let colors = {};
         let songIds = '';
-        // let genreData = undefined; // Genre data cooresponds to callArtists
-        // let songData = undefined;
+        let audioFeatures = {}
 
         // 0V18Ybdh9dNcNEZTnrFliH
 
@@ -61,7 +63,6 @@ alert('There was an error during the authentication');
                 },
                 success: function(response) {
                     console.log(response);
-                    genreData = response;
                 },
             });
         }
@@ -75,16 +76,14 @@ alert('There was an error during the authentication');
                 },
                 success: function(response) {
                     console.log(response);
-                    songData = response;
                 },
             });
         }
         
 
-        $.when(callArtists()).done(function(genreRes){
+        $.when(callArtists(), callSongs()).done(function(genreRes, songRes){
             
-            
-            const genreData = genreRes;
+            const genreData = genreRes[0];
 
             // Get Average Popularity
             let popularity = 0;
@@ -186,25 +185,28 @@ alert('There was an error during the authentication');
                     }
                 });
             }
-            genreChart();      
-        })
+            genreChart();   
 
-        // SECTION
-        // ======== TRACK CODE =========
-        $.when(callSongs()).done(function(songRes) {
 
-            const songData = songRes;
-
-            console.log("Bar Graph Code Next");
+            // =======================================================================================
+            
+            // SECTION
+            // ======== TRACK CODE =========
+    
+            const songData = songRes[0];
+            console.log(songData);
     
             // TODO take this out but its sentimental
             $("#test").text(songData.items[0].name);
     
             let songs = [];
             let artists = [];
+
+            // Assemble easily usable data sets
             for (let i = 0; i < 50; i++) {
                 songs.push(songData.items[i].name);
                 artists.push(songData.items[i].album.artists[0].name);
+                // if (i < 10) 
                 songIds += songData.items[i].id + ',';
             };
             songIds = songIds.slice(0, -1);
@@ -273,16 +275,6 @@ alert('There was an error during the authentication');
             let barTotal = Object.keys(artistSongs).length;
             if (barTotal > 15) barTotal = 15;
             
-            // TODO remove this, made redundant after callback for un-truncated tooltip
-            // Custom shortened labels for better UX on mobile
-            let barLabels = Object.keys(artistSongs).slice(0, barTotal);
-            
-            for (let i = 0; i < barLabels.length; i++) {
-                if (barLabels[i].length > 11) {
-                    barLabels[i] = barLabels[i].substring(0, 10) + "...";
-                }
-            }
-            console.log(barLabels);
     
             // Bar Chart
     
@@ -290,7 +282,7 @@ alert('There was an error during the authentication');
             const tooltipLabels = Object.values(artistSongs);
             let tooltipSongs = [];
             const footer = (tooltipItems) => {
-              
+                
                 tooltipItems.forEach(function(tooltipItem) {
                     labelSongs = tooltipLabels[tooltipItem.parsed.y].songs;
                 });
@@ -323,14 +315,14 @@ alert('There was an error during the authentication');
                         indexAxis: 'y',
                         animation: {
                             onComplete: () => {
-                              delayed = true;
+                                delayed = true;
                             },
                             delay: (context) => {
-                              let delay = 0;
-                              if (context.type === 'data' && context.mode === 'default' && !delayed) {
+                                let delay = 0;
+                                if (context.type === 'data' && context.mode === 'default' && !delayed) {
                                 delay = context.dataIndex * 200 + context.datasetIndex * 100;
-                              }
-                              return delay;
+                                }
+                                return delay;
                             },
                         },
                         scales: {
@@ -351,7 +343,9 @@ alert('There was an error during the authentication');
                                         size: 16    
                                     },
                                     callback: function(value) {
-                                        return this.getLabelForValue(value).substr(0, 10) + "..."
+                                        if (this.getLabelForValue(value).length > 11) {
+                                            return this.getLabelForValue(value).substr(0, 10) + "...";
+                                        } else return this.getLabelForValue(value);
                                     }
                                     // mirror: true,
                                     // z: 1,
@@ -374,22 +368,71 @@ alert('There was an error during the authentication');
             }
             artistSongsChart();
             // ==========================
-
+    
             // NOTE this runs here inside the callSongs "when" so it has access to all song ids
-            $.ajax({
-                url: `https://api.spotify.com/v1/audio-features?ids=${songIds}`,
-                headers: {
-                'Authorization': 'Bearer ' + access_token
-                },
-                success: function(response) {
-                    console.log(response);
-                },
+            const callFeatures = function callFeatures() {
+                
+                return $.ajax({
+                    url: `https://api.spotify.com/v1/audio-features?ids=${songIds}`,
+                    headers: {
+                    'Authorization': 'Bearer ' + access_token
+                    },
+                    success: function(response) {
+                        // console.log(response);
+                    },
+                })
+            }
+
+            $.when(callFeatures()).done(function(featuresRes) {
+
+                audioFeatures = featuresRes.audio_features;
+
+                for (i = 0; i < audioFeatures.length; i++) {
+                    audioFeatures[i].name = songData.items[i].name;
+                }
+                console.log(audioFeatures);
+
+                let acousticness = 0;
+                let danceability = 0;
+                let energy = 0;
+                let loudness = 0;
+                let mode = 0;
+                let valence = 0;
+
+                for (song of audioFeatures) {
+                    acousticness += song.acousticness;
+                    danceability += song.danceability;
+                    energy += song.energy;
+                    loudness += song.loudness;
+                    mode += song.mode;
+                    valence += song.valence;
+                }
+                acousticness = acousticness / audioFeatures.length * 100;
+                danceability = danceability / audioFeatures.length * 100;
+                energy = energy / audioFeatures.length * 100;
+                // loudness = loudness / audioFeatures.length * 100;
+                mode = mode / audioFeatures.length * 100;
+                valence = valence / audioFeatures.length * 100;
+
+                console.log(acousticness);
+                console.log(danceability);
+                console.log(energy);
+                console.log(loudness);
+                console.log(mode);
+                console.log(valence);
+
             })
+
+        
+            
         })
+
+
+
+        // $.when(callFeatures()).done(function(featuresRes)) {
+        //     audioFeatures = featuresRes;
+        // }
         
-        
-        // TODO consider taking this out of "when" to expedite removal of login page on load start
-        $('#login').hide();
 
     } else {
         // render initial screen
