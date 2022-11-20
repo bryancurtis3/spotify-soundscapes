@@ -150,6 +150,13 @@ alert('There was an error during the authentication');
             };
             topGenres.other = 0;
             console.log(topGenres);
+
+            // TODO Remove this probably, currently unused
+            let genreTooltips = [];
+            for (let i = 0; i < 8; i++) {
+                genreTooltips[i] = `${Object.keys(topGenres)[i]} Artists`;
+            }
+            console.log(genreTooltips);
     
     
             colors = {
@@ -173,7 +180,7 @@ alert('There was an error during the authentication');
                     data: {
                         labels: Object.keys(topGenres),
                         datasets: [{
-                            label: 'Top Artist Genres',
+                            label: ' Artists',
                             data: Object.values(topGenres),
                             backgroundColor: Object.values(colors),
                             hoverOffset: 20,
@@ -326,7 +333,7 @@ alert('There was an error during the authentication');
                     labels: Object.keys(artistSongs).slice(0, barTotal),
                     datasets: [{
                         data: Object.values(chartSongCounts).slice(0, barTotal),
-                        label: "Songs",
+                        label: ' Songs',
                         backgroundColor: Object.values(barData),
                         borderColor: Object.values(barData),
                         borderWidth: 1,

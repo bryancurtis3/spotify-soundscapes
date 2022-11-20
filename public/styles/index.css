@@ -70,7 +70,7 @@ main {
   position: absolute;
   bottom: 0;
   left: 0;
-  background-repeat: no-repeat;
+  background-repeat: repeat;
   background-position: center;
   background-size: cover;
   background-image: url("../../wave.svg");
@@ -100,13 +100,22 @@ main {
   }
 }
 
-#home-page #genreChart {
-  height: 100% !important;
-  width: 100% !important;
+#home-page {
+  width: 100%;
+}
+#home-page .chart-title {
+  font-size: 32px;
+  font-weight: 500;
+  text-align: center;
+  margin: 15px 0;
 }
 #home-page .chart-container {
   width: calc(100vw - 40px);
   max-width: 600px;
+}
+#home-page .chart-container #genreChart {
+  height: 100% !important;
+  width: 100% !important;
 }
 #home-page .chart-container #artistSongsChart {
   min-height: 400px !important;
@@ -115,13 +124,17 @@ main {
 #home-page #bar-container {
   position: relative;
 }
+
 @media only screen and (max-width: 450px) {
-  #home-page main {
-    padding: 0 8px;
+  main {
+    padding: 0 10px;
+  }
+
+  #home-page {
+    width: calc(100vw - 20px);
   }
   #home-page .chart-container {
-    width: auto;
-    max-width: none;
+    width: calc(100vw - 20px);
   }
 }
 
