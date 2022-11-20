@@ -26,7 +26,8 @@ alert('There was an error during the authentication');
 } else {
     if (access_token) {
 
-        $('#login').hide();
+        $('#login-page').hide();
+        $('home-page').show();
 
         // TODO remove this
         // render oauth info
@@ -51,6 +52,10 @@ alert('There was an error during the authentication');
             },
             success: function(response) {
                 console.log(response);
+            },
+            error: function(error) {
+                console.log('ERROR: ' + error.status);
+                $('#login-page').show();
             }
         })
 
@@ -64,6 +69,10 @@ alert('There was an error during the authentication');
                 success: function(response) {
                     console.log(response);
                 },
+                error: function(error) {
+                    console.log('ERROR: ' + error.status);
+                    $('#login-page').show();
+                }
             });
         }
 
@@ -77,6 +86,10 @@ alert('There was an error during the authentication');
                 success: function(response) {
                     console.log(response);
                 },
+                error: function(error) {
+                    console.log('ERROR: ' + error.status);
+                    $('#login-page').show();
+                }
             });
         }
         
@@ -152,6 +165,7 @@ alert('There was an error during the authentication');
             const genreChart = function genreChart() {
                 const ctx = document.getElementById('genreChart').getContext('2d');
             
+                let pieDelay;
                 const genreChart = new Chart(ctx, {
                     type: 'doughnut',
                     data: {
@@ -165,6 +179,18 @@ alert('There was an error during the authentication');
                         }]
                     },
                     options: {
+                        animation: {
+                            onComplete: () => {
+                                pieDelay = true;
+                            },
+                            delay: (context) => {
+                                let delay = 0;
+                                if (context.type === 'data' && context.mode === 'default' && !pieDelay) {
+                                delay = context.dataIndex * 10 + context.datasetIndex * 100;
+                                }
+                                return delay;
+                            },
+                        },
                         maintainAspectRation: false,
                         plugins: {
                             // TODO Take this out XXXXX
@@ -436,8 +462,8 @@ alert('There was an error during the authentication');
 
     } else {
         // render initial screen
-        $('#login').show();
-        $('#loggedin').hide();
+        $('#login-page').show();
+        $('#home-page').hide(); // TODO this does nothing atm
     };
     
 

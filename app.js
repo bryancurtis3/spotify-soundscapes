@@ -16,11 +16,11 @@ var cookieParser = require('cookie-parser');
 
 const app = express();
 
-console.log(process.env.CLIENT_ID + "test");
-console.log(process.env.CLIENT_SECRET + "test");
+console.log("ID: " + process.env.CLIENT_ID);
+console.log("SECRET: " + process.env.CLIENT_SECRET);
 
-const client_id = '58b16cd5698f40c5ae230fe1215bdf6b'; // Your client id
-const client_secret = '67c9a837a0f84d2c86114df205154fda'; // Your secret
+const CLIENT_ID = process.env.CLIENT_ID; // Your client id
+const CLIENT_SECRET = process.env.CLIENT_SECRET; // Your secret
 var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
 /**
@@ -55,7 +55,7 @@ app.get('/login', function(req, res) {
     res.redirect('https://accounts.spotify.com/authorize?' +
         querystring.stringify({
         response_type: 'code',
-        client_id: client_id,
+        client_id: CLIENT_ID,
         scope: scope,
         redirect_uri: redirect_uri,
         state: state
@@ -88,7 +88,7 @@ app.get('/callback', function(req, res) {
                 grant_type: 'authorization_code'
             },
             headers: {
-                'Authorization': 'Basic ' + (new Buffer.from(client_id + ':' + client_secret).toString('base64'))
+                'Authorization': 'Basic ' + (new Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64'))
             },
             json: true
         };
@@ -108,7 +108,7 @@ app.get('/callback', function(req, res) {
                 // use the access token to access the Spotify Web API
                 request.get(options, function(error, response, body) {
                     // NOTE This logs user account info to server logs
-                    console.log(body);
+                    // console.log(body);
                 });
 
                 // NOTE This is essential currently (?)
@@ -137,7 +137,7 @@ app.get('/refresh_token', function(req, res) {
     var refresh_token = req.query.refresh_token;
     var authOptions = {
         url: 'https://accounts.spotify.com/api/token',
-        headers: { 'Authorization': 'Basic ' + (new Buffer.from(client_id + ':' + client_secret).toString('base64')) },
+        headers: { 'Authorization': 'Basic ' + (new Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64')) },
         form: {
             grant_type: 'refresh_token',
             refresh_token: refresh_token

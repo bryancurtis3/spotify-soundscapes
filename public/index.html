@@ -17,21 +17,42 @@
 
     <!-- === Styles === -->
     <link rel="stylesheet" href="styles/index.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 
 </head>
 
 <body>
     <main>
-        <a href="/login" id="login">Login</a>
+        <section id="login-page">
+
+            <h2>Spotify Soundscapes</h2>
+            <h3>A simple way to see your favorite sounds</h3>
+            <a href="/login" id="login">
+                <i class="fab fa-spotify"></i>
+                <span>
+                    Log in with Spotify
+                </span>
+            </a>
+
+            <div class="wave"></div>
+            <div class="wave-desktop"></div>
+
+
+        </section>
     
-        <div class="chart-container">
-            <canvas id="genreChart"></canvas>
-        </div>
-        <div class="chart-container">
-            <canvas id="artistSongsChart" style="height: 650px;"></canvas>
-        </div>
-    
-        <div id="test"></div>
+        <section id="home-page">
+            
+            <div class="chart-container">
+                <canvas id="genreChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="artistSongsChart" style="height: 650px;"></canvas>
+            </div>
+        
+            <div id="test"></div>
+
+        </section>
 
     </main>
 </body>

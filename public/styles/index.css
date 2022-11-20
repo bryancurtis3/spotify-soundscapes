@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap");
 * {
   box-sizing: border-box;
 }
@@ -6,31 +7,114 @@ body, html {
   height: 100%;
   width: 100%;
   margin: 0;
+  font-family: "Open Sans", sans-serif;
 }
 
 main {
   display: grid;
   justify-content: center;
   height: 100%;
-  width: 100%;
+  width: 100vw;
   padding: 0 20px;
 }
 
-.chart-container {
+#login-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: calc(100vw - 40px);
+}
+#login-page h2 {
+  width: 100%;
+  font-size: 38px;
+  text-align: center;
+  margin: 0;
+  margin-top: 50px;
+}
+#login-page h3 {
+  text-align: center;
+}
+#login-page #login {
+  width: 70%;
+  align-self: center;
+  padding: 10px 17px 13px 17px;
+  margin-top: 300px;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  color: whitesmoke;
+  border-radius: 500px;
+  background-color: #1DB954;
+  transition: 0.1s ease-in-out;
+}
+#login-page #login:hover {
+  transform: scale(1.02);
+  background-color: #1fc65a;
+}
+#login-page #login:active {
+  background-color: #168d40;
+}
+#login-page #login span {
+  position: relative;
+  top: 2px;
+}
+#login-page #login .fa-spotify {
+  color: whitesmoke;
+  font-size: 36px;
+  padding-right: 10px;
+  vertical-align: middle;
+}
+#login-page .wave {
+  aspect-ratio: 390/300;
+  width: 100%;
+  overflow: hidden;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  background-image: url("../../wave.svg");
+  z-index: -1;
+}
+#login-page .wave-desktop {
+  display: none;
+  aspect-ratio: 1080/300;
+  max-height: 275px;
+  width: 100%;
+  overflow: hidden;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  background-image: url("../../wave-dekstop.svg");
+  z-index: -1;
+}
+@media only screen and (min-width: 450px) {
+  #login-page .wave {
+    display: none;
+  }
+  #login-page .wave-desktop {
+    display: block;
+  }
+}
+
+#home-page .chart-container {
   width: calc(100vw - 40px);
   max-width: 600px;
 }
-.chart-container #artistSongsChart {
+#home-page .chart-container #artistSongsChart {
   min-height: 400px !important;
   width: 100% !important;
 }
-
 @media only screen and (max-width: 450px) {
-  main {
+  #home-page main {
     padding: 0 8px;
   }
-
-  .chart-container {
+  #home-page .chart-container {
     width: auto;
     max-width: none;
   }
