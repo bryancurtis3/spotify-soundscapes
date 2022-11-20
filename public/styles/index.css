@@ -4,8 +4,6 @@
 }
 
 body, html {
-  height: 100%;
-  width: 100%;
   margin: 0;
   font-family: "Open Sans", sans-serif;
 }
@@ -102,6 +100,10 @@ main {
   }
 }
 
+#home-page #genreChart {
+  height: 100% !important;
+  width: 100% !important;
+}
 #home-page .chart-container {
   width: calc(100vw - 40px);
   max-width: 600px;
@@ -109,6 +111,9 @@ main {
 #home-page .chart-container #artistSongsChart {
   min-height: 400px !important;
   width: 100% !important;
+}
+#home-page #bar-container {
+  position: relative;
 }
 @media only screen and (max-width: 450px) {
   #home-page main {

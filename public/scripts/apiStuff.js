@@ -148,6 +148,7 @@ alert('There was an error during the authentication');
                     };
                 };
             };
+            topGenres.other = 0;
             console.log(topGenres);
     
     
@@ -159,7 +160,8 @@ alert('There was an error during the authentication');
                 blue: 'rgb(74, 172, 245)',
                 folklore: 'rgb(255, 120, 120)',
                 lightBlue: 'rgb(142, 200, 255)',
-                orange: 'rgb(251, 145, 90)'
+                orange: 'rgb(251, 145, 90)',
+                other: 'rgb(80, 80, 80, .7)'
             }
     
             const genreChart = function genreChart() {
@@ -191,7 +193,6 @@ alert('There was an error during the authentication');
                                 return delay;
                             },
                         },
-                        maintainAspectRation: false,
                         plugins: {
                             // TODO Take this out XXXXX
                             // title: {
@@ -317,9 +318,9 @@ alert('There was an error during the authentication');
             };
     
             console.log(artistSongs)
+
             const artistSongsChart = function artistSongsChart() {
                 const ctx = document.getElementById('artistSongsChart').getContext('2d');
-    
                 
                 const data = {
                     labels: Object.keys(artistSongs).slice(0, barTotal),
@@ -337,7 +338,8 @@ alert('There was an error during the authentication');
                     type: 'bar',
                     data: data,
                     options: {
-                        responsive: false,
+                        // responsive: false,
+                        maintainAspectRatio: false,
                         indexAxis: 'y',
                         animation: {
                             onComplete: () => {
