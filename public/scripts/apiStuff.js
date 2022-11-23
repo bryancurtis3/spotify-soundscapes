@@ -1,5 +1,28 @@
 // require("dotenv").config();
 
+
+// Local session stuff for API
+sessionStorage.getItem("timeRange") ? timeRange = sessionStorage.getItem("timeRange") : timeRange = ''; // Acts as timeRange declaration
+
+console.log(timeRange);
+console.log(sessionStorage.getItem("timeRange"));
+
+// Recent Data
+const recentData = function recentData() {
+    sessionStorage.setItem("timeRange", "time_range=short_term&");
+}
+
+// Default Data
+const defaultData = function defaultData() {
+    sessionStorage.removeItem("timeRange");
+    console.log("BACK TO BASICS");
+}
+
+const longTermData = function longTermData() {
+    sessionStorage.setItem("timeRange", "time_range=long_term&");
+    console.log("THE LONG CON");
+}
+
 /**
  * Obtains parameters from the hash of the URL
  * @return Object
@@ -27,7 +50,23 @@ alert('There was an error during the authentication');
     if (access_token) {
 
         $('#login-page').hide();
-        $('home-page').show();
+        $('#home-page').show(); // TODO I don't think this does anything?
+
+        // Button Check
+
+        if (sessionStorage.getItem('timeRange') === 'time_range=short_term&') {
+            $('#recent').css('background-color', '#1DB954');
+        } else if (sessionStorage.getItem('timeRange') === 'time_range=long_term&') {
+            $('#long-term').css('background-color', '#1DB954');
+        } else {
+            // $('#default').css('background-color', '#1DB954');
+            $('#default').prop("onclick", null).off("click");;
+            $('#default').attr('id', 'active-time')
+
+        }
+
+
+        
 
         // TODO remove this
         // render oauth info
@@ -62,7 +101,7 @@ alert('There was an error during the authentication');
         const callArtists = function callArtists() {
     
             return $.ajax({
-                url: 'https://api.spotify.com/v1/me/top/artists?limit=50',
+                url: `https://api.spotify.com/v1/me/top/artists?${timeRange}limit=50`,
                 headers: {
                 'Authorization': 'Bearer ' + access_token
                 },
@@ -79,7 +118,7 @@ alert('There was an error during the authentication');
         const callSongs = function callSongs() {
 
             return $.ajax({
-                url: 'https://api.spotify.com/v1/me/top/tracks?limit=50',
+                url: `https://api.spotify.com/v1/me/top/tracks?${timeRange}limit=50`,
                 headers: {
                 'Authorization': 'Bearer ' + access_token
                 },
@@ -95,12 +134,12 @@ alert('There was an error during the authentication');
         
 
         $.when(callArtists(), callSongs()).done(function(genreRes, songRes){
-            
+
             const genreData = genreRes[0];
 
             // Get Average Popularity
             let popularity = 0;
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < genreData.items.length; i++) {
                 popularity += genreData.items[i].popularity;
             }
             popularity = popularity / 50;
@@ -111,7 +150,7 @@ alert('There was an error during the authentication');
             // Extract data from JSON
             let genres = [];
             let artistData = [];
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < genreData.items.length; i++) {
     
                 artistData.push(genreData.items[i].name);
     
@@ -168,7 +207,7 @@ alert('There was an error during the authentication');
                 folklore: 'rgb(255, 120, 120)',
                 lightBlue: 'rgb(142, 200, 255)',
                 orange: 'rgb(251, 145, 90)',
-                other: 'rgb(80, 80, 80, .7)'
+                other: 'rgba(80, 80, 80, .7)'
             }
     
             const genreChart = function genreChart() {
@@ -201,11 +240,6 @@ alert('There was an error during the authentication');
                             },
                         },
                         plugins: {
-                            // TODO Take this out XXXXX
-                            // title: {
-                            //     display: true,
-                            //     text: 'Your Favorite Genres'
-                            // },
                             legend: {
                                 position: 'bottom',
                                 labels: {
@@ -214,6 +248,11 @@ alert('There was an error during the authentication');
                                     },
                                     usePointStyle: true,
                                 }
+                            }
+                        },
+                        layout: {
+                            padding: {
+                                top: 8
                             }
                         }
                     }

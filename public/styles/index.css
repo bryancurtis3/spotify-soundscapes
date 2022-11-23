@@ -51,6 +51,7 @@ main {
   background-color: #1fc65a;
 }
 #login-page #login:active {
+  transform: scale(1);
   background-color: #168d40;
 }
 #login-page #login span {
@@ -102,6 +103,46 @@ main {
 
 #home-page {
   width: 100%;
+}
+#home-page .time {
+  padding-top: 20px;
+}
+#home-page .time .time-button-title {
+  text-align: center;
+  margin: 0;
+  font-weight: 500;
+}
+#home-page .time .time-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 3%;
+  padding: 15px 5px 15px 5px;
+}
+#home-page .time .time-buttons button {
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  color: whitesmoke;
+  background-color: #747474;
+  cursor: pointer;
+}
+#home-page .time .time-buttons button:hover {
+  transform: scale(1.02);
+  background-color: #7c7c7c;
+}
+#home-page .time .time-buttons button:active {
+  transform: scale(1);
+  background-color: #5b5b5b;
+}
+#home-page .time #active-time {
+  background-color: #1DB954;
+  transition: 0.1s ease-in-out;
+}
+#home-page .time #active-time:hover {
+  transform: scale(1);
 }
 #home-page .chart-title {
   font-size: 32px;

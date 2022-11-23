@@ -28,7 +28,7 @@
 
             <h2>Spotify Soundscapes</h2>
             <h3>A simple way to see your favorite sounds</h3>
-            <a href="/login" id="login">
+            <a href="/login" id="login" class="button">
                 <i class="fab fa-spotify"></i>
                 <span>
                     Log in with Spotify
@@ -42,7 +42,17 @@
         </section>
     
         <section id="home-page">
-            
+
+            <div class="time">
+                <h4 class="time-button-title">Time Range</h4>
+                <div class="time-buttons">
+                    <button class="button" id="recent" onClick="window.location.reload(); recentData()">Recent</button>
+                    <button class="button" id="default" onClick="window.location.reload(); defaultData()">Default</button>
+                    <button class="button" id="long-term" onClick="window.location.reload(); longTermData()">Long Term</button>
+                </div>
+            </div>
+
+
             <h4 class="chart-title">Your Top Genres</h4>
             <div class="chart-container">
                 <canvas id="genreChart"></canvas>
