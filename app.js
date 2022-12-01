@@ -50,7 +50,7 @@ app.get('/login', function(req, res) {
     res.cookie(stateKey, state);
 
     // your application requests authorization
-    const scope = 'user-read-private user-read-email user-top-read user-follow-read';
+    const scope = 'user-read-private user-read-email user-top-read user-follow-read user-read-recently-played';
 
     res.redirect('https://accounts.spotify.com/authorize?' +
         querystring.stringify({
@@ -58,7 +58,8 @@ app.get('/login', function(req, res) {
         client_id: CLIENT_ID,
         scope: scope,
         redirect_uri: redirect_uri,
-        state: state
+        state: state,
+        show_dialog: true
         }));
 });
 
@@ -108,7 +109,7 @@ app.get('/callback', function(req, res) {
                 // use the access token to access the Spotify Web API
                 request.get(options, function(error, response, body) {
                     // NOTE This logs user account info to server logs
-                    // console.log(body);
+                    console.log(body);
                 });
 
                 // NOTE This is essential currently (?)

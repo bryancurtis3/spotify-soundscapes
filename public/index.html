@@ -46,9 +46,9 @@
             <div class="time">
                 <h4 class="time-button-title">Time Range</h4>
                 <div class="time-buttons">
-                    <button class="button" id="recent" onClick="window.location.reload(); recentData()">Recent</button>
-                    <button class="button" id="default" onClick="window.location.reload(); defaultData()">Default</button>
-                    <button class="button" id="long-term" onClick="window.location.reload(); longTermData()">Long Term</button>
+                    <button class="button" id="recent" onClick="window.location.reload(); recentData()">4 Weeks</button>
+                    <button class="button" id="default" onClick="window.location.reload(); defaultData()">6 Months</button>
+                    <button class="button" id="long-term" onClick="window.location.reload(); longTermData()">All Time</button>
                 </div>
             </div>
 
@@ -58,15 +58,88 @@
                 <canvas id="genreChart"></canvas>
             </div>
 
-            <h4 class="chart-title">Your Top Songs</h4>
+            <!-- Thought about doing this dynamically, but not worth it for 10 li's, would rather keep the app as light as possible -->
+
+            <article class="top-lists">
+                <div class="top-container">
+                    <h4>Your Top Artists</h4>
+                    <ul class="top-artists">
+                        <li>
+                            <span class="artist-number">1</span>
+                            <img class="artist-image" id="artist-image-0">
+                            <span class="artist-name" id="artist-name-0"></span>
+                        </li>
+                        <li>
+                            <span class="artist-number">2</span>
+                            <img class="artist-image" id="artist-image-1">
+                            <span class="artist-name" id="artist-name-1"></span>
+        
+                        </li>
+                        <li>
+                            <span class="artist-number">3</span>
+                            <img class="artist-image" id="artist-image-2">
+                            <span class="artist-name" id="artist-name-2"></span>
+        
+                        </li>
+                        <li>
+                            <span class="artist-number">4</span>
+                            <img class="artist-image" id="artist-image-3">
+                            <span class="artist-name" id="artist-name-3"></span>
+        
+                        </li>
+                        <li>
+                            <span class="artist-number">5</span>
+                            <img class="artist-image" id="artist-image-4">
+                            <span class="artist-name" id="artist-name-4"></span>
+        
+                        </li>
+                    </ul>
+                </div>
+    
+                <div class="top-container">
+                    <h4>Your Top Songs</h4>
+                    <ul class="top-songs">
+                        <li>
+                            <span class="song-number">1</span>
+                            <img class="song-image" id="song-image-0">
+                            <span class="song-name" id="song-name-0"></span>
+                        </li>
+                        <li>
+                            <span class="song-number">2</span>
+                            <img class="song-image" id="song-image-1">
+                            <span class="song-name" id="song-name-1"></span>
+        
+                        </li>
+                        <li>
+                            <span class="song-number">3</span>
+                            <img class="song-image" id="song-image-2">
+                            <span class="song-name" id="song-name-2"></span>
+        
+                        </li>
+                        <li>
+                            <span class="song-number">4</span>
+                            <img class="song-image" id="song-image-3">
+                            <span class="song-name" id="song-name-3"></span>
+        
+                        </li>
+                        <li>
+                            <span class="song-number">5</span>
+                            <img class="song-image" id="song-image-4">
+                            <span class="song-name" id="song-name-4"></span>
+        
+                        </li>
+                    </ul>
+                </div>
+            </article>
+
+            <!-- <h4 class="chart-title">Your Top Artists</h4>
             <div class="chart-container" id="bar-container">
                 <canvas id="artistSongsChart" style="height: 650px;"></canvas>
-            </div>
-        
-            <div id="test"></div>
+            </div> -->
 
         </section>
 
+        <!-- <button id="obtain-new-token">New Token</button> -->
     </main>
 </body>
 </html>
