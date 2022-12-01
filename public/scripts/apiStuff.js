@@ -78,7 +78,7 @@ if (error) {
                 }
             },
             error: function(error) {
-                console.log(`ERROR: ${error.status}`);
+                console.log(`Error: ${error.responseJSON.error.message}`);
                 $('#login-page').show();
                 $('#home-page').hide();
             }
@@ -110,7 +110,7 @@ if (error) {
                 console.log(response);
             },
             error: function(error) {
-                console.log('ERROR: ' + error.status);
+                console.log(`Error: ${error.responseJSON.error.message}`);
                 $('#login-page').show();
                 $('#home-page').hide();
             }
@@ -127,7 +127,7 @@ if (error) {
                     console.log(response);
                 },
                 error: function(error) {
-                    console.log('ERROR: ' + error.status);
+                    console.log(`Error: ${error.responseJSON.error.message}`);
                     $('#login-page').show();
                     $('#home-page').hide();   
                 }
@@ -145,7 +145,7 @@ if (error) {
                     console.log(response);
                 },
                 error: function(error) {
-                    console.log('ERROR: ' + error.status);
+                    console.log(`Error: ${error.responseJSON.error.message}`);
                     $('#login-page').show();
                     $('#home-page').hide();   
                 }
@@ -493,16 +493,34 @@ if (error) {
             // artistSongsChart();
             // ==========================
 
+            const playSong = function playSong(event) {
+                ajaxData = {uris: [event.data.param1]};
+                $.ajax({
+                    url: `https://api.spotify.com/v1/me/player/play`,
+                    type: 'PUT',
+                    headers: {
+                    'Authorization': 'Bearer ' + access_token
+                    },
+                    data: JSON.stringify(ajaxData),
+                    error: function(error) {
+                        console.log(`Error: ${error.responseJSON.error.message}`);
+                    }
+                })
+            }
+
             // Top Artists list code below
             console.log(genreData)
             console.log(songData)
             for (i = 0; i < 5; i++) {
-                // console.log(genreData.items[i])
+                console.log(songData.items[i].artists[0].name)
                 $(`#artist-image-${i}`).attr('src', genreData.items[i].images[2].url);
                 $(`#artist-name-${i}`).text(genreData.items[i].name);
 
                 $(`#song-image-${i}`).attr('src', songData.items[i].album.images[2].url);
                 $(`#song-name-${i}`).text(songData.items[i].name);
+                $(`#song-artist-${i}`).text(songData.items[i].artists[0].name);
+                $(`#song-artist-${i}`).attr('href', `https://open.spotify.com/artist/${songData.items[i].artists[0].id}`);
+                $(`#song-play-${i}`).click({param1: songData.items[i].uri}, playSong);
             }
 
     

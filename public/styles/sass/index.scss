@@ -182,6 +182,7 @@ main {
     .chart-container {
         width: calc(100vw - 40px);
         max-width: 600px;
+        margin: 0 auto;
 
         #genreChart {
             height: 100%!important; // !important used to override chartJS inline sizing
@@ -200,7 +201,7 @@ main {
 
     .top-lists {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         gap: 20px;
         margin-top: 20px;
     }
@@ -222,17 +223,33 @@ main {
     
             li {
                 display: grid;
-                grid-template-columns: 35px 55px 1fr;
+                grid-template-columns: 45px 55px 1fr;
                 align-items: center;
                 height: 65px;
                 border-radius: 2px;
+                padding-right: 15px;
     
                 &:hover {
                     background-color: rgb(200, 200, 200);
+
+                    .song-number {
+                        color: white;
+                        display: none;
+                    }
+
+                    .song-play {
+                        display: block;
+                    }
                 }
     
-                .artist-number, .song-number {
+                .artist-number, .song-number, .song-play {
                     justify-self: center;
+                }
+                .song-play {
+                    display: none;
+                    text-decoration: none;
+                    color: black;
+                    cursor: pointer;
                 }
     
                 .artist-image, .song-image {
@@ -242,8 +259,32 @@ main {
                     // border: 3px solid gray;
                 }
     
-                .artist-name, .song-name {
+                .artist-name, .song-name, .list-subtext {
                     padding-left: 15px;
+                    // Below is for dynamic ellipsis and text box size for links
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    width: fit-content;
+                    max-width: 100%;
+                }
+
+                .list-subtext {
+                    font-size: 12px;
+                    color: rgb(90, 90, 90);
+                    text-decoration: none;
+
+                    &:hover {
+                        color: black;
+                        text-decoration: underline;
+                    }
+                }
+
+                .song-text {
+                    display: flex;
+                    flex-direction: column;
+                    margin: 0;
+                    overflow: hidden;
                 }
             }
         }
