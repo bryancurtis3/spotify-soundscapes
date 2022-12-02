@@ -289,6 +289,47 @@ main {
             }
         }
     }
+    
+    .rating-container {
+        height: 150px;
+        width: 150px;
+        position: relative;
+        
+        .rating-canvas {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            transform: rotate(-90deg);
+        }
+
+        .circle {
+            display: grid;
+            justify-items: center;
+            height: 124px;
+            width: 124px;
+            background-color: rgb(213, 213, 213);
+            z-index: 1;
+            position: absolute;
+            top: 0;
+            left: 0;
+            margin: 13px 0 0 13px;
+            border-radius: 50%;
+        }
+
+        .rating-number {
+            height: 65px;
+            display: inline-block;
+            margin: 0;
+            font-size: 52px;
+            font-weight: 500;
+            align-self: end;
+        }
+
+        .rating-title {
+            padding-bottom: 15px;
+            margin: 0;
+        }
+    }
 }
 
 @media only screen and (max-width: 450px) {

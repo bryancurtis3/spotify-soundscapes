@@ -238,6 +238,42 @@ main {
   margin: 0;
   overflow: hidden;
 }
+#home-page .rating-container {
+  height: 150px;
+  width: 150px;
+  position: relative;
+}
+#home-page .rating-container .rating-canvas {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  transform: rotate(-90deg);
+}
+#home-page .rating-container .circle {
+  display: grid;
+  justify-items: center;
+  height: 124px;
+  width: 124px;
+  background-color: #d5d5d5;
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 13px 0 0 13px;
+  border-radius: 50%;
+}
+#home-page .rating-container .rating-number {
+  height: 65px;
+  display: inline-block;
+  margin: 0;
+  font-size: 52px;
+  font-weight: 500;
+  align-self: end;
+}
+#home-page .rating-container .rating-title {
+  padding-bottom: 15px;
+  margin: 0;
+}
 
 @media only screen and (max-width: 450px) {
   main {

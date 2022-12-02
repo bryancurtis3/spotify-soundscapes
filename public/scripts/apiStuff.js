@@ -81,6 +81,7 @@ if (error) {
                 console.log(`Error: ${error.responseJSON.error.message}`);
                 $('#login-page').show();
                 $('#home-page').hide();
+                window.location.replace("http://localhost:8888") // FIXME change this to a base URL and include other ajax calls, remove old show/hide code
             }
         });
 
@@ -575,7 +576,44 @@ if (error) {
                 console.log(loudness);
                 console.log(mode);
                 console.log(valence);
-            })
+
+                function circleScale(category, rating) {
+                    console.log(category + " - " + rating);
+                    
+                    const percent = rating * (Math.PI*2 / 100); // Create's a percent from 0-100 in radians
+                    console.log(percent);
+                    const canvas = document.getElementById(category);
+                    const ctx = canvas.getContext('2d');
+
+                    //get DPI
+                    const dpi = window.devicePixelRatio;
+
+                    canvas.setAttribute("height", canvas.clientHeight * dpi);
+                    canvas.setAttribute("width", canvas.clientWidth * dpi);
+
+                    ctx.beginPath();
+                    ctx.arc( 150, 150, 130, Math.PI*2, 0, true);
+                    ctx.strokeStyle = "#444444";
+                    ctx.lineWidth = 28;
+                    // ctx.lineCap = "round";
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.arc( 150, 150, 130, percent, 0, true);
+                    ctx.strokeStyle = "#0095ff";
+                    ctx.lineWidth = 28;
+                    // ctx.lineCap = "round";
+                    ctx.stroke();
+
+
+                };
+
+                circleScale('danceability', danceability);
+                $('#danceability-number').text(Math.round(danceability));
+                $('#danceability-title').text("Danceability");
+
+
+            });
 
         
             
