@@ -23,7 +23,7 @@ console.log("SECRET: " + process.env.CLIENT_SECRET);
 
 const CLIENT_ID = process.env.CLIENT_ID; // Your client id
 const CLIENT_SECRET = process.env.CLIENT_SECRET; // Your secret
-var redirect_uri = 'https://elegant-hen-jacket.cyclic.app/callback'; // Your redirect uri
+var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters
@@ -73,6 +73,9 @@ app.get('/callback', function(req, res) {
     var code = req.query.code || null;
     var state = req.query.state || null;
     var storedState = req.cookies ? req.cookies[stateKey] : null;
+
+    console.log(`State: ${state}`);
+    console.log(`Stored State: ${storedState}`);
 
     if (state === null || state !== storedState) {
         res.redirect('/#' +
