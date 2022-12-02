@@ -14,6 +14,8 @@ var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
+const path = require('path');
+
 const app = express();
 
 console.log("ID: " + process.env.CLIENT_ID);
@@ -59,7 +61,7 @@ app.get('/login', function(req, res) {
         scope: scope,
         redirect_uri: redirect_uri,
         state: state,
-        show_dialog: true
+        // show_dialog: true // TODO remove
         }));
 });
 
@@ -108,13 +110,12 @@ app.get('/callback', function(req, res) {
 
                 // use the access token to access the Spotify Web API
                 request.get(options, function(error, response, body) {
-                    // NOTE This logs user account info to server logs
-                    console.log(body);
+                    console.log(body); // NOTE This logs user account info to server logs
                 });
 
                 // NOTE This is essential currently (?)
                 // we can also pass the token to the browser to make requests from there
-                res.redirect('/#' +
+                res.redirect('/soundscape/#' +
                     querystring.stringify({
                         access_token: access_token,
                         refresh_token: refresh_token
@@ -130,6 +131,14 @@ app.get('/callback', function(req, res) {
         });
     }
 });
+
+app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/soundscape', function(req, res) {
+    res.sendFile(path.join(__dirname, 'soundscape.html'));
+})
 
 // NOTE Not in use while token_refresher is commented out in apiStuff ***
 app.get('/refresh_token', function(req, res) {
