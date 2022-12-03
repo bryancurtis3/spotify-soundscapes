@@ -1,12 +1,5 @@
-// require("dotenv").config();
-
-
 // Local session stuff for API
 sessionStorage.getItem("timeRange") ? timeRange = sessionStorage.getItem("timeRange") : timeRange = ''; // Acts as timeRange declaration
-
-// TODO Delete
-// console.log(timeRange);
-// console.log(sessionStorage.getItem("timeRange"));
 
 // Recent Data
 const recentData = function recentData() {
@@ -163,7 +156,7 @@ if (error) {
             for (let i = 0; i < genreData.items.length; i++) {
                 popularity += genreData.items[i].popularity;
             }
-            popularity = popularity / 50;
+            popularity = popularity / genreData.items.length;
             console.log(popularity);
     
             // ===== Genres =====
@@ -231,7 +224,7 @@ if (error) {
                 folklore: 'rgb(255, 120, 120)',
                 lightBlue: 'rgb(142, 200, 255)',
                 orange: 'rgb(251, 145, 90)',
-                other: 'rgba(80, 80, 80, .7)'
+                other: 'rgba(80, 80, 80, .7)' // TODO remove this if I don't resurrect the bar graph
             }
     
             const genreChart = function genreChart() {
@@ -494,6 +487,11 @@ if (error) {
             // artistSongsChart();
             // ==========================
 
+            /**
+             * Tells Spotify which song to play based on the element clicked
+             * 
+             * @param {string} event Holds the song URI that needs to be played
+             */
             const playSong = function playSong(event) {
                 ajaxData = {uris: [event.data.param1]};
                 $.ajax({
@@ -577,42 +575,53 @@ if (error) {
                 console.log(mode);
                 console.log(valence);
 
-                function circleScale(category, rating) {
-                    console.log(category + " - " + rating);
+                // TODO remove "title" param if I decide to stick with variables and just rename them to what I want the titles to be
+                /**
+                 * Asses the audio features of the User's top tracks and displays their scores with the corresponding category
+                 * 
+                 * @param {string} category The category that is being rated (ex. popularity)
+                 * @param {number} rating The score (from 0-100) given to the category
+                 * @param {string} title The text to be displayed alongisde the rating
+                 */
+                function generateRatingCircle(category, rating, title) {
+                    console.log(category + ': ' + rating);
                     
                     const percent = rating * (Math.PI*2 / 100); // Create's a percent from 0-100 in radians
-                    console.log(percent);
+
                     const canvas = document.getElementById(category);
                     const ctx = canvas.getContext('2d');
 
-                    //get DPI
-                    const dpi = window.devicePixelRatio;
+                    // Clean up the rough canvas edges
+                    const dpi = 2; //FIXME this needs to be tested on mobile to see if 2 works and/or if the original (window.devicePixelRatio) actually destroys itself
+                    canvas.setAttribute('height', canvas.clientHeight * dpi);
+                    canvas.setAttribute('width', canvas.clientWidth * dpi);
 
-                    canvas.setAttribute("height", canvas.clientHeight * dpi);
-                    canvas.setAttribute("width", canvas.clientWidth * dpi);
-
+                    // Progress background
                     ctx.beginPath();
-                    ctx.arc( 150, 150, 130, Math.PI*2, 0, true);
-                    ctx.strokeStyle = "#444444";
+                    ctx.arc(150, 150, 130, Math.PI*2, 0, true);
+                    ctx.strokeStyle = '#838383';
                     ctx.lineWidth = 28;
-                    // ctx.lineCap = "round";
+                    ctx.lineCap = 'round';
                     ctx.stroke();
 
+                    // Progress itself (color)
                     ctx.beginPath();
-                    ctx.arc( 150, 150, 130, percent, 0, true);
-                    ctx.strokeStyle = "#0095ff";
+                    ctx.arc(150, 150, 130, percent, 0, true);
+                    ctx.strokeStyle = 'rgb(74, 172, 245)';
+                    // ctx.shadowOffsetX = 0;
+                    // ctx.shadowOffsetY = 0;
+                    // ctx.shadowBlur = 10;
+                    // ctx.shadowColor = 'rgb(74, 172, 245)';
                     ctx.lineWidth = 28;
-                    // ctx.lineCap = "round";
                     ctx.stroke();
 
-
+                    $(`#${category}-number`).text(Math.round(rating));
+                    $(`#${category}-title`).text(category.charAt(0).toUpperCase() + category.slice(1));
                 };
 
-                circleScale('danceability', danceability);
-                $('#danceability-number').text(Math.round(danceability));
-                $('#danceability-title').text("Danceability");
-
-
+                generateRatingCircle('danceability', danceability, 'Partyness');
+                generateRatingCircle('mode', mode);
+                generateRatingCircle('popularity', popularity)
             });
 
         

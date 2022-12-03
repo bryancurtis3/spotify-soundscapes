@@ -24,175 +24,174 @@
 
 <body>
     <main>
-    
-        <section id="home-page">
 
-            <div class="time">
-                <h4 class="time-button-title">Time Range</h4>
-                <div class="time-buttons">
-                    <button class="button" id="recent" onClick="window.location.reload(); recentData()">4 Weeks</button>
-                    <button class="button" id="default" onClick="window.location.reload(); defaultData()">6 Months</button>
-                    <button class="button" id="long-term" onClick="window.location.reload(); longTermData()">All Time</button>
-                </div>
+        <div class="time">
+            <h4 class="time-button-title">Time Range</h4>
+            <div class="time-buttons">
+                <button class="button" id="recent" onClick="window.location.reload(); recentData()">One Month</button>
+                <button class="button" id="default" onClick="window.location.reload(); defaultData()">Six Months</button>
+                <button class="button" id="long-term" onClick="window.location.reload(); longTermData()">All Data</button>
             </div>
+        </div>
 
 
-            <h4 class="chart-title">Your Top Genres</h4>
-            <div class="chart-container">
-                <canvas id="genreChart"></canvas>
-            </div>
+        <h4 class="chart-title">Your Top Genres</h4>
+        <div class="chart-container">
+            <canvas id="genreChart"></canvas>
+        </div>
 
-            <!-- Thought about doing this dynamically, but not worth it for 10 li's, would rather keep the app as light as possible -->
+        <!-- Thought about doing this dynamically, but not worth it for 10 li's, would rather keep the app as light as possible -->
 
-            <article class="top-lists">
-                <div class="top-container">
-                    <h4>Your Top Artists</h4>
-                    <ul class="top-artists">
-                        <li>
-                            <span class="artist-number">1</span>
-                            <img class="artist-image" id="artist-image-0">
-                            <span class="artist-name" id="artist-name-0"></span>
-                        </li>
-                        <li>
-                            <span class="artist-number">2</span>
-                            <img class="artist-image" id="artist-image-1">
-                            <span class="artist-name" id="artist-name-1"></span>
-        
-                        </li>
-                        <li>
-                            <span class="artist-number">3</span>
-                            <img class="artist-image" id="artist-image-2">
-                            <span class="artist-name" id="artist-name-2"></span>
-        
-                        </li>
-                        <li>
-                            <span class="artist-number">4</span>
-                            <img class="artist-image" id="artist-image-3">
-                            <span class="artist-name" id="artist-name-3"></span>
-        
-                        </li>
-                        <li>
-                            <span class="artist-number">5</span>
-                            <img class="artist-image" id="artist-image-4">
-                            <span class="artist-name" id="artist-name-4"></span>
-        
-                        </li>
-                    </ul>
-                </div>
+        <section class="top-lists">
+            <article class="top-container">
+                <h4>Your Top Artists</h4>
+                <ul class="top-artists">
+                    <li>
+                        <span class="artist-number">1</span>
+                        <img class="artist-image" id="artist-image-0">
+                        <span class="artist-name" id="artist-name-0"></span>
+                    </li>
+                    <li>
+                        <span class="artist-number">2</span>
+                        <img class="artist-image" id="artist-image-1">
+                        <span class="artist-name" id="artist-name-1"></span>
     
-                <div class="top-container">
-                    <h4>Your Top Songs</h4>
-                    <ul class="top-songs">
-                        <li>
-                            <span class="song-number">1</span>
-                            <a 
-                                class="fa-solid fa-play song-play" 
-                                id="song-play-0" 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
-                                title="Play Song on Spotify">
-                            </a>
-                            <img class="song-image" id="song-image-0">
-                            <p class="song-text">
-                                <span class="song-name" id="song-name-0"></span>
-                                <a 
-                                    class="list-subtext" 
-                                    id="song-artist-0" 
-                                    target="_blank" 
-                                    rel="noopener noreferrer" 
-                                    title="Go to Artist on Spotify">
-                                </a>
-                            </p>
-                        </li>
-                        <li>
-                            <span class="song-number">2</span>
-                            <a 
-                                class="fa-solid fa-play song-play" 
-                                id="song-play-1" 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
-                                title="Play Song on Spotify">
-                            </a>
-                            <img class="song-image" id="song-image-1">
-                            <p class="song-text">
-                                <span class="song-name" id="song-name-1"></span>
-                                <a 
-                                    class="list-subtext" 
-                                    id="song-artist-1" 
-                                    target="_blank" 
-                                    rel="noopener noreferrer" 
-                                    title="Go to Artist on Spotify">
-                                </a>
-                            </p>
-                        </li>
-                        <li>
-                            <span class="song-number">3</span>
-                            <a 
-                                class="fa-solid fa-play song-play" 
-                                id="song-play-2" 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
-                                title="Play Song on Spotify">
-                            </a>
-                            <img class="song-image" id="song-image-2">
-                            <p class="song-text">
-                                <span class="song-name" id="song-name-2"></span>
-                                <a 
-                                    class="list-subtext" 
-                                    id="song-artist-2" 
-                                    target="_blank" 
-                                    rel="noopener noreferrer" 
-                                    title="Go to Artist on Spotify">
-                                </a>
-                            </p>
-                        </li>
-                        <li>
-                            <span class="song-number">4</span>
-                            <a 
-                                class="fa-solid fa-play song-play" 
-                                id="song-play-3" 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
-                                title="Play Song on Spotify">
-                            </a>
-                            <img class="song-image" id="song-image-3">
-                            <p class="song-text">
-                                <span class="song-name" id="song-name-3"></span>
-                                <a 
-                                    class="list-subtext" 
-                                    id="song-artist-3" 
-                                    target="_blank" 
-                                    rel="noopener noreferrer" 
-                                    title="Go to Artist on Spotify">
-                                </a>
-                            </p>
-        
-                        </li>
-                        <li>
-                            <span class="song-number">5</span>
-                            <a 
-                                class="fa-solid fa-play song-play" 
-                                id="song-play-4" 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
-                                title="Play Song on Spotify">
-                            </a>
-                            <img class="song-image" id="song-image-4">
-                            <p class="song-text">
-                                <span class="song-name" id="song-name-4"></span>
-                                <a 
-                                    class="list-subtext" 
-                                    id="song-artist-4" 
-                                    target="_blank" 
-                                    rel="noopener noreferrer" 
-                                    title="Go to Artist on Spotify">
-                                </a>
-                            </p>
-                        </li>
-                    </ul>
-                </div>
+                    </li>
+                    <li>
+                        <span class="artist-number">3</span>
+                        <img class="artist-image" id="artist-image-2">
+                        <span class="artist-name" id="artist-name-2"></span>
+    
+                    </li>
+                    <li>
+                        <span class="artist-number">4</span>
+                        <img class="artist-image" id="artist-image-3">
+                        <span class="artist-name" id="artist-name-3"></span>
+    
+                    </li>
+                    <li>
+                        <span class="artist-number">5</span>
+                        <img class="artist-image" id="artist-image-4">
+                        <span class="artist-name" id="artist-name-4"></span>
+    
+                    </li>
+                </ul>
             </article>
 
+            <article class="top-container">
+                <h4>Your Top Songs</h4>
+                <ul class="top-songs">
+                    <li>
+                        <span class="song-number">1</span>
+                        <a 
+                            class="fa-solid fa-play song-play" 
+                            id="song-play-0" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            title="Play Song on Spotify">
+                        </a>
+                        <img class="song-image" id="song-image-0">
+                        <p class="song-text">
+                            <span class="song-name" id="song-name-0"></span>
+                            <a 
+                                class="list-subtext" 
+                                id="song-artist-0" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                title="Go to Artist on Spotify">
+                            </a>
+                        </p>
+                    </li>
+                    <li>
+                        <span class="song-number">2</span>
+                        <a 
+                            class="fa-solid fa-play song-play" 
+                            id="song-play-1" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            title="Play Song on Spotify">
+                        </a>
+                        <img class="song-image" id="song-image-1">
+                        <p class="song-text">
+                            <span class="song-name" id="song-name-1"></span>
+                            <a 
+                                class="list-subtext" 
+                                id="song-artist-1" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                title="Go to Artist on Spotify">
+                            </a>
+                        </p>
+                    </li>
+                    <li>
+                        <span class="song-number">3</span>
+                        <a 
+                            class="fa-solid fa-play song-play" 
+                            id="song-play-2" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            title="Play Song on Spotify">
+                        </a>
+                        <img class="song-image" id="song-image-2">
+                        <p class="song-text">
+                            <span class="song-name" id="song-name-2"></span>
+                            <a 
+                                class="list-subtext" 
+                                id="song-artist-2" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                title="Go to Artist on Spotify">
+                            </a>
+                        </p>
+                    </li>
+                    <li>
+                        <span class="song-number">4</span>
+                        <a 
+                            class="fa-solid fa-play song-play" 
+                            id="song-play-3" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            title="Play Song on Spotify">
+                        </a>
+                        <img class="song-image" id="song-image-3">
+                        <p class="song-text">
+                            <span class="song-name" id="song-name-3"></span>
+                            <a 
+                                class="list-subtext" 
+                                id="song-artist-3" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                title="Go to Artist on Spotify">
+                            </a>
+                        </p>
+    
+                    </li>
+                    <li>
+                        <span class="song-number">5</span>
+                        <a 
+                            class="fa-solid fa-play song-play" 
+                            id="song-play-4" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            title="Play Song on Spotify">
+                        </a>
+                        <img class="song-image" id="song-image-4">
+                        <p class="song-text">
+                            <span class="song-name" id="song-name-4"></span>
+                            <a 
+                                class="list-subtext" 
+                                id="song-artist-4" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                title="Go to Artist on Spotify">
+                            </a>
+                        </p>
+                    </li>
+                </ul>
+            </article>
+        </section>
+
+        <section class="all-ratings">
             <article class="rating-container">
                 <canvas id="danceability" class="rating-canvas"></canvas>
                 <div class="circle">
@@ -201,13 +200,29 @@
                 </div>
             </article>
 
+            <article class="rating-container">
+                <canvas id="mode" class="rating-canvas"></canvas>
+                <div class="circle">
+                    <p id="mode-number" class="rating-number"></p>
+                    <p id="mode-title" class="rating-title"></p>
+                </div>
+            </article>
 
-            <!-- <h4 class="chart-title">Your Top Artists</h4>
-            <div class="chart-container" id="bar-container">
-                <canvas id="artistSongsChart" style="height: 650px;"></canvas>
-            </div> -->
-
+            <article class="rating-container">
+                <canvas id="popularity" class="rating-canvas"></canvas>
+                <div class="circle">
+                    <p id="popularity-number" class="rating-number"></p>
+                    <p id="popularity-title" class="rating-title"></p>
+                </div>
+            </article>
         </section>
+
+
+        <!-- <h4 class="chart-title">Your Top Artists</h4>
+        <div class="chart-container" id="bar-container">
+            <canvas id="artistSongsChart" style="height: 650px;"></canvas>
+        </div> -->
+
 
         <!-- <button id="obtain-new-token">New Token</button> -->
     </main>
