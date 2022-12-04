@@ -8,13 +8,13 @@
  */
 
 require("dotenv").config();
-var express = require('express'); // Express web server framework
-var request = require('request'); // "Request" library
-var cors = require('cors');
-var querystring = require('querystring');
-var cookieParser = require('cookie-parser');
-
+const express = require('express'); // Express web server framework
+const request = require('request'); // "Request" library
+const cors = require('cors');
+const querystring = require('querystring');
+const cookieParser = require('cookie-parser');
 const path = require('path');
+
 
 const app = express();
 
@@ -23,7 +23,7 @@ console.log("SECRET: " + process.env.CLIENT_SECRET);
 
 const CLIENT_ID = process.env.CLIENT_ID; // Your client id
 const CLIENT_SECRET = process.env.CLIENT_SECRET; // Your secret
-var redirect_uri = 'https://spotify-soundscapes.cyclic.app/callback'; // Your redirect uri
+var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters
@@ -41,10 +41,13 @@ var generateRandomString = function(length) {
 };
 
 var stateKey = 'spotify_auth_state';
+console.log("test")
 
+// === System Configuration
 app.use(express.static(__dirname + '/public'))
    .use(cors())
    .use(cookieParser());
+app.set("view engine", "ejs");
 
 app.get('/login', function(req, res) {
 
@@ -81,7 +84,7 @@ app.get('/callback', function(req, res) {
     if (state === null || state !== storedState) {
         res.redirect('/#' +
             querystring.stringify({
-                error: 'state_mismatch'
+                error: 'state_mismatch' //FIXME deployments (and maybe localhost under the right circumstances?) have an initial state_mismatch problem
             })
         );
 
@@ -133,7 +136,7 @@ app.get('/callback', function(req, res) {
                 }));
             };
         });
-    }
+    };
 });
 
 app.get('/', function(req, res) {
@@ -141,8 +144,8 @@ app.get('/', function(req, res) {
 });
 
 app.get('/soundscape', function(req, res) {
-    res.sendFile(path.join(__dirname, 'soundscape.html'));
-})
+    res.render(path.join(__dirname, 'soundscape.ejs'));
+});
 
 // NOTE Not in use while token_refresher is commented out in apiStuff ***
 app.get('/refresh_token', function(req, res) {

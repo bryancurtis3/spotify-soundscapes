@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Soundscapes</title>
+
+
+    <!-- === Scripts === -->
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-1.10.1.min.js" defer></script>
+    <!-- Spotify API Logic -->
+    <script src="../scripts/apiStuff.js" defer></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- === Styles === -->
+    <link rel="stylesheet" href="../styles/index.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+
+</head>
+
+<body>
+
+    <!-- <nav>
+        <h2>Soundscapes</h2>
+        <h5>Menu</h5>
+    </nav> -->
+
+    <main>
+
+        <div class="time">
+            <h4 class="time-button-title">Time Range</h4>
+            <div class="time-buttons">
+                <button class="button" id="recent" onClick="window.location.reload(); recentData()">One Month</button>
+                <button class="button" id="default" onClick="window.location.reload(); defaultData()">Six Months</button>
+                <button class="button" id="long-term" onClick="window.location.reload(); longTermData()">All Data</button>
+            </div>
+        </div>
+
+
+        <h4 class="chart-title">Your Top Genres</h4>
+        <div class="chart-container">
+            <canvas id="genreChart"></canvas>
+        </div>
+
+
+        <section class="top-lists">
+            <article class="top-container">
+                <h4>Your Top Artists</h4>
+                <ul class="top-artists">
+                    <!-- Generate top artists -->
+                    <% for (let i = 0; i < 5; i++) { %> 
+                        <li>
+                            <span class="artist-number"><%= i + 1 %></span>
+                            <img class="artist-image" id="artist-image-<%= i %>">
+                            <span class="artist-name" id="artist-name-<%= i %>"></span>
+                        </li>
+                    <% } %> 
+                </ul>
+            </article>
+
+            <article class="top-container">
+                <h4>Your Top Songs</h4>
+                <ul class="top-songs">
+
+                    <!-- Generate top songs -->
+                    <% for (let i = 0; i < 5; i++) { %> 
+                        <li>
+                            <span class="song-number"><%= i + 1 %></span>
+                            <a 
+                                class="fa-solid fa-play song-play" 
+                                id="song-play-<%= i %>" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                title="Play Song on Spotify">
+                            </a>
+                            <img class="song-image" id="song-image-<%= i %>">
+                            <p class="song-text">
+                                <span class="song-name" id="song-name-<%= i %>"></span>
+                                <a 
+                                    class="list-subtext" 
+                                    id="song-artist-<%= i %>" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    title="Go to Artist on Spotify">
+                                </a>
+                            </p>
+                        </li>
+                    <% } %> 
+
+                </ul>
+            </article>
+        </section>
+
+        <!-- Ratings are drawn individually in JS so aren't creating with EJS -->
+        <section class="all-ratings">
+            <article class="rating-container">
+                <canvas id="danceability" class="rating-canvas"></canvas>
+                <div class="circle">
+                    <p id="danceability-number" class="rating-number"></p>
+                    <p id="danceability-title" class="rating-title"></p>
+                </div>
+            </article>
+
+            <article class="rating-container">
+                <canvas id="mode" class="rating-canvas"></canvas>
+                <div class="circle">
+                    <p id="mode-number" class="rating-number"></p>
+                    <p id="mode-title" class="rating-title"></p>
+                </div>
+            </article>
+
+            <article class="rating-container">
+                <canvas id="popularity" class="rating-canvas"></canvas>
+                <div class="circle">
+                    <p id="popularity-number" class="rating-number"></p>
+                    <p id="popularity-title" class="rating-title"></p>
+                </div>
+            </article>
+        </section>
+
+
+        <!-- <h4 class="chart-title">Your Top Artists</h4>
+        <div class="chart-container" id="bar-container">
+            <canvas id="artistSongsChart" style="height: 650px;"></canvas>
+        </div> -->
+
+
+        <!-- <button id="obtain-new-token">New Token</button> -->
+    </main>
+</body>
+</html>

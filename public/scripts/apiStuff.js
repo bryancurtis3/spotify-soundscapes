@@ -74,7 +74,7 @@ if (error) {
                 console.log(`Error: ${error.responseJSON.error.message}`);
                 $('#login-page').show();
                 $('#home-page').hide();
-                window.location.replace("http://https://spotify-soundscapes.cyclic.app/") // FIXME change this to a base URL and include other ajax calls, remove old show/hide code
+                window.location.replace("http://localhost:8888") // FIXME change this to a base URL and include other ajax calls, remove old show/hide code
             }
         });
 
@@ -204,15 +204,31 @@ if (error) {
                     };
                 };
             };
-            topGenres.other = 0;
+            // topGenres.other = 0; // TODO remove this if I don't resurrect the bar graph
             console.log(topGenres);
 
-            // TODO Remove this probably, currently unused
-            let genreTooltips = [];
-            for (let i = 0; i < 8; i++) {
-                genreTooltips[i] = `${Object.keys(topGenres)[i]} Artists`;
+
+            // Compiling data for custom doughnut tooltip
+            let genreArtists = {};
+            for (let i = 0; i < Object.keys(artistsGenres).length; i++) {
+                let artist = Object.keys(artistsGenres)[i];
+                // console.log(artist);
+                for (const genre in topGenres) {
+                    if (artistsGenres[artist].includes(genre)) {
+                        // console.log(genre);
+                        genreArtists[genre] ? genreArtists[genre].push(artist) : genreArtists[genre] = [artist];
+                    }
+                }
             }
-            console.log(genreTooltips);
+            console.log(genreArtists);
+
+            // This uses genreArtists to construct tooltips
+            const footer = (tooltipItems) => {
+                tooltipItems.forEach(function(tooltipItem) {
+                    labelArtists = genreArtists[tooltipItem.label];
+                });
+                return labelArtists;
+            };
     
     
             colors = {
@@ -224,7 +240,7 @@ if (error) {
                 folklore: 'rgb(255, 120, 120)',
                 lightBlue: 'rgb(142, 200, 255)',
                 orange: 'rgb(251, 145, 90)',
-                other: 'rgba(80, 80, 80, .7)' // TODO remove this if I don't resurrect the bar graph
+                // other: 'rgba(80, 80, 80, .7)' // TODO remove this if I don't resurrect the bar graph
             }
     
             const genreChart = function genreChart() {
@@ -241,6 +257,7 @@ if (error) {
                             backgroundColor: Object.values(colors),
                             hoverOffset: 20,
                             hoverBorderJoinStyle: 'round',
+                            borderColor: "rgb(45, 45, 45)"
                         }]
                     },
                     options: {
@@ -263,7 +280,16 @@ if (error) {
                                     font: {
                                         size: 16
                                     },
+                                    color: "white",
                                     usePointStyle: true,
+                                }
+                            },
+                            tooltip: {
+                                titleFont: {
+                                    size: 16
+                                },
+                                callbacks: {
+                                    footer: footer
                                 }
                             }
                         },
@@ -284,9 +310,6 @@ if (error) {
     
             const songData = songRes[0];
             console.log(songData);
-    
-            // TODO take this out but its sentimental
-            $("#test").text(songData.items[0].name);
     
             let songs = [];
             let artists = [];
@@ -390,7 +413,7 @@ if (error) {
             // Custom tooltip function
             const tooltipLabels = Object.values(barData);
             let tooltipSongs = [];
-            const footer = (tooltipItems) => {
+            const barFooter = (tooltipItems) => {
                 
                 tooltipItems.forEach(function(tooltipItem) {
                     labelSongs = tooltipLabels[tooltipItem.parsed.y];
@@ -477,7 +500,7 @@ if (error) {
             //                 },
             //                 tooltip: {
             //                     callbacks: {
-            //                         footer: footer,
+            //                         footer: barFooter,
             //                     }
             //                 }
             //             }
@@ -511,7 +534,7 @@ if (error) {
             console.log(genreData)
             console.log(songData)
             for (i = 0; i < 5; i++) {
-                console.log(songData.items[i].artists[0].name)
+                // console.log(songData.items[i].artists[0].name)
                 $(`#artist-image-${i}`).attr('src', genreData.items[i].images[2].url);
                 $(`#artist-name-${i}`).text(genreData.items[i].name);
 
@@ -564,9 +587,17 @@ if (error) {
                 acousticness = acousticness / audioFeatures.length * 100;
                 danceability = danceability / audioFeatures.length * 100;
                 energy = energy / audioFeatures.length * 100;
-                // loudness = loudness / audioFeatures.length * 100;
+                // loudness = loudness / audioFeatures.length * 100; Loudness is a weird negative value
                 mode = mode / audioFeatures.length * 100;
                 valence = valence / audioFeatures.length * 100;
+
+                if (popularity < 50) {
+                    popularity = 0;
+                } else if (popularity > 90) {
+                    popularity = 100;
+                } else {
+                    popularity = Math.round((popularity - 50) * 100 / (90 - 50));
+                }
 
                 console.log(acousticness);
                 console.log(danceability);
@@ -599,21 +630,23 @@ if (error) {
                     // Progress background
                     ctx.beginPath();
                     ctx.arc(150, 150, 130, Math.PI*2, 0, true);
-                    ctx.strokeStyle = '#838383';
-                    ctx.lineWidth = 28;
+                    ctx.strokeStyle = 'rgb(75, 75, 75)';
+                    ctx.lineWidth = 25;
                     ctx.lineCap = 'round';
                     ctx.stroke();
 
-                    // Progress itself (color)
-                    ctx.beginPath();
-                    ctx.arc(150, 150, 130, percent, 0, true);
-                    ctx.strokeStyle = 'rgb(74, 172, 245)';
-                    // ctx.shadowOffsetX = 0;
-                    // ctx.shadowOffsetY = 0;
-                    // ctx.shadowBlur = 10;
-                    // ctx.shadowColor = 'rgb(74, 172, 245)';
-                    ctx.lineWidth = 28;
-                    ctx.stroke();
+                    // Progress itself (color), don't draw if rating is 0
+                    if (rating > 0) {
+                        ctx.beginPath();
+                        ctx.arc(150, 150, 130, percent, 0, true);
+                        ctx.strokeStyle = 'rgb(74, 172, 245)';
+                        // ctx.shadowOffsetX = 0;
+                        // ctx.shadowOffsetY = 0;
+                        // ctx.shadowBlur = 10;
+                        // ctx.shadowColor = 'rgb(74, 172, 245)';
+                        ctx.lineWidth = 25;
+                        ctx.stroke();
+                    }
 
                     $(`#${category}-number`).text(Math.round(rating));
                     $(`#${category}-title`).text(category.charAt(0).toUpperCase() + category.slice(1));
