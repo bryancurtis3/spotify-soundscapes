@@ -48,38 +48,88 @@
 
 
         <section class="top-lists">
+
             <article class="top-container">
                 <h4>Your Top Artists</h4>
                 <ul class="top-artists">
+
                     <!-- Generate top artists -->
-                    <% for (let i = 0; i < 5; i++) { %> 
-                        <li>
-                            <span class="artist-number"><%= i + 1 %></span>
-                            <img class="artist-image" id="artist-image-<%= i %>">
-                            <span class="artist-name" id="artist-name-<%= i %>"></span>
+                    <% for (let i = 0; i < 10; i++) { %> 
+
+                        <% i >= 5 ? extended = "extended-artists" : extended = "" %> 
+
+                        <li class="<%= extended %>">
+                            <a 
+                                class="fa-solid fa-play num-play" 
+                                id="artist-play-<%= i %>" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                title="Play Artist on Spotify">
+                            </a>
+                            <span class="li-number"><%= i + 1 %></span>
+                            <img class="li-image" id="artist-image-<%= i %>">
+                            <p class="li-text">
+                                <a 
+                                    class="li-name" 
+                                    id="artist-name-<%= i %>" 
+                                    title="Go to Artist on Spotify"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                </a>
+                            </p>
                         </li>
                     <% } %> 
+
                 </ul>
+                <span class="see-more-button see-more-artists">SEE MORE</span>
             </article>
 
             <article class="top-container">
                 <h4>Your Top Songs</h4>
                 <ul class="top-songs">
 
+                    <!-- Top Songs Legend -->
+                    <li class="list-legend">
+                        <span class="hashtag">#</span>
+                        <span class="legend-title">TITLE</span>
+                        <span class="legend-popularity">POPULARITY</span>
+                        <svg role="img" height="16" width="16" aria-hidden="true" viewBox="0 0 16 16" class="Svg-sc-ytk21e-0 uPxdw">
+                            <path fill="rgb(179, 179, 179)" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8z"></path>
+                            <path fill="rgb(179, 179, 179)" d="M8 3.25a.75.75 0 01.75.75v3.25H11a.75.75 0 010 1.5H7.25V4A.75.75 0 018 3.25z"></path>
+                        </svg>
+                    </li>
+
                     <!-- Generate top songs -->
-                    <% for (let i = 0; i < 5; i++) { %> 
-                        <li>
-                            <span class="song-number"><%= i + 1 %></span>
+                    <% for (let i = 0; i < 10; i++) { %> 
+
+                        <% i >= 5 ? extended = "extended-songs" : extended = "" %> 
+
+                        <li class="<%= extended %>">
+                            <span class="li-number"><%= i + 1 %></span>
                             <a 
-                                class="fa-solid fa-play song-play" 
+                                class="fa-solid fa-play num-play" 
                                 id="song-play-<%= i %>" 
                                 target="_blank" 
                                 rel="noopener noreferrer" 
                                 title="Play Song on Spotify">
                             </a>
-                            <img class="song-image" id="song-image-<%= i %>">
-                            <p class="song-text">
-                                <span class="song-name" id="song-name-<%= i %>"></span>
+                            <a 
+                                class="li-image" 
+                                id="album-link-<%= i %>" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                title="Go to Album on Spotify"
+                            >
+                                <img class="li-image" id="song-image-<%= i %>">
+                            </a>
+                            <p class="li-text">
+                                <a 
+                                    class="li-name" 
+                                    id="song-name-<%= i %>" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    title="Go to Song & Lyrics on Spotify">
+                                </a>
                                 <a 
                                     class="list-subtext" 
                                     id="song-artist-<%= i %>" 
@@ -88,10 +138,16 @@
                                     title="Go to Artist on Spotify">
                                 </a>
                             </p>
+                            <div class="song-popularity" id="song-popularity-<%= i %>">
+                                <span class="popularity highlighted"></span>
+                                <span class="popularity dimmed"></span>
+                            </div>
+                            <span class="duration" id="song-duration-<%= i %>"></span>
                         </li>
                     <% } %> 
 
                 </ul>
+                <span class="see-more-button see-more-songs">SEE MORE</span>
             </article>
         </section>
 

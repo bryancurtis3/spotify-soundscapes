@@ -42,9 +42,6 @@ if (error) {
 } else {
     if (access_token) {
 
-        $('#login-page').hide();
-        $('#home-page').show(); // TODO I don't think this does anything?
-
         // Highlights current time range and disables refresh of current time
         if (sessionStorage.getItem('timeRange') === 'time_range=short_term&') {
             $('#recent').prop("onclick", null).off("click");
@@ -150,14 +147,6 @@ if (error) {
         $.when(callArtists(), callSongs()).done(function(genreRes, songRes){
 
             const genreData = genreRes[0];
-
-            // Get Average Popularity
-            let popularity = 0;
-            for (let i = 0; i < genreData.items.length; i++) {
-                popularity += genreData.items[i].popularity;
-            }
-            popularity = popularity / genreData.items.length;
-            console.log(popularity);
     
             // ===== Genres =====
     
@@ -515,8 +504,12 @@ if (error) {
              * 
              * @param {string} event Holds the song URI that needs to be played
              */
-            const playSong = function playSong(event) {
-                ajaxData = {uris: [event.data.param1]};
+            const playSpotify = function playSpotify(event) {
+                if (event.data.uriType == "song") {
+                    ajaxData = {uris: [event.data.uri]};
+                } else if (event.data.uriType == "artist") {
+                    ajaxData = {context_uri: event.data.uri};
+                }
                 $.ajax({
                     url: `https://api.spotify.com/v1/me/player/play`,
                     type: 'PUT',
@@ -530,20 +523,111 @@ if (error) {
                 })
             }
 
+            /**
+             * Refactors numbers in miliseconds to minutes:seconds
+             * 
+             * @param {number} duration A number in ms
+             * @returns {string} A time formatted in minutes:seconds
+             */
+            const refactorDuration = function refactorDuration(duration) {
+                const minutes = Math.floor(duration / 60000);
+                const seconds = ((duration % 60000) / 1000).toFixed(0);
+                return (seconds == 60 ? (minutes+1) + ":00" : minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
+            }
+
+            // Get Average Popularity
+            let popularity = 0;
+            for (let i = 0; i < genreData.items.length; i++) {
+                popularity += genreData.items[i].popularity;
+            }
+            popularity = popularity / genreData.items.length;
+
+            /**
+             * A function to increase distribution of popularity to better visualize differences
+             * 
+             * @param {number} popularity A Song or Artist's popularity rating according to Spotify
+             * @param {number} low The low bound of the new scale that will == 0 when rescaled
+             * @param {number} high The high bound of the new scale that will == 100 when rescaled
+             * @returns {number} The new popularity value according to the modified scale
+             */
+            const rescalePopularity = function rescalePopularity(popularity, low, high) {
+                if (!low) low = 50;
+                if (!high) high = 90;
+
+                if (popularity < low) {
+                    popularity = 0;
+                } else if (popularity > high) {
+                    popularity = 100;
+                } else {
+                    popularity = Math.round((popularity - low) * 100 / (high - low));
+                }
+                return popularity;
+            }
+            popularity = rescalePopularity(popularity);
+
+            const popularityArray = [];
+
+            for (let i = 0; i < 10; i++) {
+                const songPop = Math.round(rescalePopularity(songData.items[i].popularity, 30, 85) / 10);
+
+                let highlighted = '';
+                let dimmed = '';
+                for (let j = 0; j < 10; j++) {
+                    j < songPop ? highlighted = highlighted + '|' : dimmed = dimmed + '|'
+                }
+                // console.log(highlighted + " + " + dimmed);
+                popularityArray[i] = [highlighted, dimmed]
+            }
+            console.log(popularityArray);
+
+            for (let i = 0; i < 10; i++) {
+
+            }
+
             // Top Artists list code below
             console.log(genreData)
             console.log(songData)
-            for (i = 0; i < 5; i++) {
+            for (i = 0; i < 10; i++) {
                 // console.log(songData.items[i].artists[0].name)
                 $(`#artist-image-${i}`).attr('src', genreData.items[i].images[2].url);
                 $(`#artist-name-${i}`).text(genreData.items[i].name);
 
                 $(`#song-image-${i}`).attr('src', songData.items[i].album.images[2].url);
                 $(`#song-name-${i}`).text(songData.items[i].name);
-                $(`#song-artist-${i}`).text(songData.items[i].artists[0].name);
-                $(`#song-artist-${i}`).attr('href', `https://open.spotify.com/artist/${songData.items[i].artists[0].id}`);
-                $(`#song-play-${i}`).click({param1: songData.items[i].uri}, playSong);
+
+                $(`#album-link-${i}`).attr('href', songData.items[i].album.external_urls.spotify);
+
+                $(`#artist-name-${i}`).attr('href', genreData.items[i].external_urls.spotify)
+                $(`#song-name-${i}`).attr('href', songData.items[i].external_urls.spotify)
+                
+                $(`#song-artist-${i}`).text(songData.items[i].artists[0].name)
+                    .attr('href', songData.items[i].artists[0].external_urls.spotify);
+                $(`#song-play-${i}`).click({uri: songData.items[i].uri, uriType: "song"}, playSpotify);
+                $(`#artist-play-${i}`).click({uri: genreData.items[i].uri, uriType: "artist"}, playSpotify);
+
+                $(`#song-popularity-${i} .highlighted`).text(popularityArray[i][0]);
+                $(`#song-popularity-${i} .dimmed`).text(popularityArray[i][1]);
+
+                $(`#song-duration-${i}`).text(refactorDuration(songData.items[i].duration_ms));
             }
+
+            // See More and Show Less logic
+            let moreOrLess = 'less';
+            const seeMoreLess = function seeMoreLess(event) {
+                const type = event.data.type;
+                if (moreOrLess === 'less') {
+                    $(`.see-more-${type}`).text('SHOW LESS');
+                    $(`.extended-${type}`).css('display', 'grid');
+                    moreOrLess = 'more'
+                } else if (moreOrLess === 'more') {
+                    $(`.see-more-${type}`).text('SEE MORE');
+                    $(`.extended-${type}`).css('display', 'none');
+                    moreOrLess = 'less'
+                }
+            }
+            $('.see-more-artists').click({type: 'artists'}, seeMoreLess);
+            $('.see-more-songs').click({type: 'songs'}, seeMoreLess);
+
 
     
             // NOTE this runs here inside the callSongs "when" so it has access to all song ids
@@ -590,14 +674,6 @@ if (error) {
                 // loudness = loudness / audioFeatures.length * 100; Loudness is a weird negative value
                 mode = mode / audioFeatures.length * 100;
                 valence = valence / audioFeatures.length * 100;
-
-                if (popularity < 50) {
-                    popularity = 0;
-                } else if (popularity > 90) {
-                    popularity = 100;
-                } else {
-                    popularity = Math.round((popularity - 50) * 100 / (90 - 50));
-                }
 
                 console.log(acousticness);
                 console.log(danceability);
@@ -669,7 +745,7 @@ if (error) {
         
 
     } else {
-        // render initial screen
+        // TODO this is deprecated and now Idk what this if statement even does
         $('#login-page').show();
         $('#home-page').hide(); // TODO this does nothing atm
     };
