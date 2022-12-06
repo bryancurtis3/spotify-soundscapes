@@ -23,7 +23,7 @@ console.log("SECRET: " + process.env.CLIENT_SECRET);
 
 const CLIENT_ID = process.env.CLIENT_ID; // Your client id
 const CLIENT_SECRET = process.env.CLIENT_SECRET; // Your secret
-var redirect_uri = 'https://spotify-soundscapes.cyclic.app//callback'; // Your redirect uri
+var redirect_uri = 'https://spotify-soundscapes.cyclic.app/callback'; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters
