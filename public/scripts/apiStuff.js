@@ -71,7 +71,7 @@ if (error) {
                 console.log(`Error: ${error.responseJSON.error.message}`);
                 $('#login-page').show();
                 $('#home-page').hide();
-                window.location.replace("http://localhost:8888") // FIXME change this to a base URL and include other ajax calls, remove old show/hide code
+                window.location.replace("https://spotify-soundscapes.cyclic.app/") // FIXME change this to a base URL and include other ajax calls, remove old show/hide code
             }
         });
 

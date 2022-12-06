@@ -130,9 +130,9 @@ nav {
 }
 #login-main footer {
   height: 60px;
-  width: 100%;
-  margin-top: 40px;
-  background-color: gray;
+  width: calc(100% - 80px);
+  position: absolute;
+  bottom: 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -140,7 +140,7 @@ nav {
 }
 #login-main footer a {
   text-decoration: none;
-  color: black;
+  color: white;
   font-size: 42px;
 }
 
