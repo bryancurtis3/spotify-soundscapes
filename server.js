@@ -19,7 +19,7 @@ const app = express();
 
 const CLIENT_ID = process.env.CLIENT_ID; // Your client id
 const CLIENT_SECRET = process.env.CLIENT_SECRET; // Your secret
-const redirect_uri = process.env.BASE_URL; // Your redirect uri
+const redirect_uri = process.env.BASE_URL + "/callback"; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters
@@ -52,7 +52,6 @@ app.get('/login', function(req, res) {
     // your application requests authorization
     const scope = 'user-read-private user-read-email user-top-read user-follow-read user-read-recently-played app-remote-control streaming user-modify-playback-state';
 
-    console.log(redirect_uri);
     res.redirect('https://accounts.spotify.com/authorize?' +
         querystring.stringify({
         response_type: 'code',
