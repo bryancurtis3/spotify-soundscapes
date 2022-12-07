@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "node server.js",
-    "watch-sass": "sass --watch sass/index.scss public/styles/index.css",
+    "watch-sass": "sass --watch sass:public/styles",
     "watch-nodemon": "nodemon server.js",
     "dev": "concurrently --handle-input -n server,sass -c 'bgGrey.bold,bgRed.bold' 'npm:watch-nodemon' 'npm:watch-sass' rs "
   },

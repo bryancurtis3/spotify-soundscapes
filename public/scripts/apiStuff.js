@@ -54,7 +54,7 @@ if (error) {
             $('#default').attr('id', 'active-time');
         }
 
-        
+        // TODO this is temp, decide if I want to use this
         $.ajax({
             url: 'https://api.spotify.com/v1/me/player/recently-played',
             headers: {
@@ -64,23 +64,15 @@ if (error) {
                 console.log(response);
                 
                 for (let i = 0; i < response.items.length; i++) {
-                    console.log(response.items[i].track.name)
+                    // console.log(response.items[i].track.name);
                 }
             },
             error: function(error) {
                 console.log(`Error: ${error.responseJSON.error.message}`);
-                $('#login-page').show();
-                $('#home-page').hide();
-                window.location.replace("https://spotify-soundscapes.cyclic.app/") // FIXME change this to a base URL and include other ajax calls, remove old show/hide code
+                window.location.replace(window.location.origin);
             }
         });
 
-        // TODO remove this
-        // render oauth info
-        // oauthPlaceholder.innerHTML = oauthTemplate({
-        // access_token: access_token,
-        // refresh_token: refresh_token
-        // });
 
         // Scope widened to share data between API calls
         const artistsGenres = {};
@@ -90,55 +82,36 @@ if (error) {
         let songIds = '';
         let audioFeatures = {}
 
-        // 0V18Ybdh9dNcNEZTnrFliH
 
-        $.ajax({
-            url: 'https://api.spotify.com/v1/artists/1moxjboGR7GNWYIMWsRjgG',
-            headers: {
-            'Authorization': 'Bearer ' + access_token
-            },
-            success: function(response) {
-                console.log(response);
-            },
-            error: function(error) {
-                console.log(`Error: ${error.responseJSON.error.message}`);
-                $('#login-page').show();
-                $('#home-page').hide();
-            }
-        });
-
+        // Ajax calls built into functions to be fed to .when() functions
         const callArtists = function callArtists() {
-    
             return $.ajax({
                 url: `https://api.spotify.com/v1/me/top/artists?${timeRange}limit=50`,
                 headers: {
                 'Authorization': 'Bearer ' + access_token
                 },
                 success: function(response) {
-                    console.log(response);
+                    // console.log(response);
                 },
                 error: function(error) {
                     console.log(`Error: ${error.responseJSON.error.message}`);
-                    $('#login-page').show();
-                    $('#home-page').hide();   
+                    window.location.replace(window.location.origin);  
                 }
             });
         }
 
         const callSongs = function callSongs() {
-
             return $.ajax({
                 url: `https://api.spotify.com/v1/me/top/tracks?${timeRange}limit=50`,
                 headers: {
                 'Authorization': 'Bearer ' + access_token
                 },
                 success: function(response) {
-                    console.log(response);
+                    // console.log(response);
                 },
                 error: function(error) {
                     console.log(`Error: ${error.responseJSON.error.message}`);
-                    $('#login-page').show();
-                    $('#home-page').hide();   
+                    window.location.replace(window.location.origin);   
                 }
             });
         }
@@ -167,21 +140,21 @@ if (error) {
                 artistsGenres[artist] = genreData.items[artistIterator].genres
                 artistIterator++;
             }
-            console.log(artistsGenres);
+            // console.log(artistsGenres);
             
             // Compile simple artists: [...genres] object
             const genreStats = {};
             for (const genre of genres) {
                 genreStats[genre] = genreStats[genre] ? genreStats[genre] + 1 : 1;
             }
-            console.log(genreStats);
+            // console.log(genreStats);
     
             // Make an array of total count for each genre from highest to lowest
             let mostGenres = Object.values(genreStats)
             .sort((function(a, b) {return a - b;}))
             .reverse()
             .splice(0, 8);
-            console.log(mostGenres);
+            // console.log(mostGenres);
     
             // Make an object of genre: occurences
             for (const genre in genreStats) {
@@ -194,22 +167,20 @@ if (error) {
                 };
             };
             // topGenres.other = 0; // TODO remove this if I don't resurrect the bar graph
-            console.log(topGenres);
+            // console.log(topGenres);
 
 
             // Compiling data for custom doughnut tooltip
             let genreArtists = {};
             for (let i = 0; i < Object.keys(artistsGenres).length; i++) {
                 let artist = Object.keys(artistsGenres)[i];
-                // console.log(artist);
                 for (const genre in topGenres) {
                     if (artistsGenres[artist].includes(genre)) {
-                        // console.log(genre);
                         genreArtists[genre] ? genreArtists[genre].push(artist) : genreArtists[genre] = [artist];
                     }
                 }
             }
-            console.log(genreArtists);
+            // console.log(genreArtists);
 
             // This uses genreArtists to construct tooltips
             const footer = (tooltipItems) => {
@@ -298,7 +269,7 @@ if (error) {
             // ======== TRACK CODE =========
     
             const songData = songRes[0];
-            console.log(songData);
+            // console.log(songData);
     
             let songs = [];
             let artists = [];
@@ -313,8 +284,8 @@ if (error) {
             songIds = songIds.slice(0, -1);
             
             // console.log(songIds);
-            console.log(artists);
-            console.log(artistsGenres);
+            // console.log(artists);
+            // console.log(artistsGenres);
             
     
             // Check if artist is already there, add song to array of existing songs, calculate number of songs as 'length'
@@ -340,9 +311,9 @@ if (error) {
                     chartSongCounts[artist] = chartSongCounts[artist] + 1;
                 } 
             }
-            console.log(chartSongCounts);
-            console.log(artistSongs); 
-            console.log(topGenres);
+            // console.log(chartSongCounts);
+            // console.log(artistSongs); 
+            // console.log(topGenres);
 
 
             // This takes a ton of objects and compares them all to find which artists from the top artists overlap with artists from the top tracks, at which point it finds the genres of those artists that do overlap, but (hopefully) only if the genre is one of the *8 top genres
@@ -350,7 +321,7 @@ if (error) {
             const barColorData = {};
             
             // NOTE ***** this is where genre are decided, based on first genre, maybe make some system where it's based on the genre the artist covers that also has the most weight for the user IE pick the users biggest genre that the artist also represents, instead of just the first
-            console.log(artistsGenres);
+            // console.log(artistsGenres);
             let barIterator = 0;
             for (artist in artistSongs) {
                 barIterator++;
@@ -370,25 +341,23 @@ if (error) {
                 // Extra exception for artists which didn't make top artists list and therefor genres are unknown (lumping in with other, I don't think people will mind or notice tbh)
                 } else if (!(artist in artistsGenres)) barColorData[artist] = 'rgb(80, 80, 80, .7)';
             };
-            console.log(barColorData);
+            // console.log(barColorData);
 
             
             let barData = {};
             let barSortIterator = 0;
             for (artist in artistsGenres) {
                 if (barSortIterator >= 15) break;
-                
                 artistSongs[artist] ? barData[artist] = artistSongs[artist] : barData[artist] = [];
-
                 barSortIterator++;
             }
-            console.log(barData);
+            // console.log(barData);
 
             let songCounts = {};
             for (artist in barData) {
                 songCounts[artist] = barData[artist].length;
             }
-            console.log(songCounts);
+            // console.log(songCounts);
     
     
     
@@ -565,28 +534,27 @@ if (error) {
             }
             popularity = rescalePopularity(popularity);
 
-            const popularityArray = [];
 
-            for (let i = 0; i < 10; i++) {
-                const songPop = Math.round(rescalePopularity(songData.items[i].popularity, 30, 85) / 10);
-
+            /**
+             * Takes popularity from 0-100, scales it down to 0-10, and returns highlighted and dimmed line values for display to the user
+             * 
+             * @param {number} songPop A 0-10 value for song popularity
+             * @return {array} An array that contains the number of highlighted bars and dimmed bars in [0] and [1] respectively
+             */
+            const compilePopularity = function compilePopularity(songPop) {
+                songPop = songPop / 10;
                 let highlighted = '';
                 let dimmed = '';
                 for (let j = 0; j < 10; j++) {
                     j < songPop ? highlighted = highlighted + '|' : dimmed = dimmed + '|'
                 }
-                // console.log(highlighted + " + " + dimmed);
-                popularityArray[i] = [highlighted, dimmed]
-            }
-            console.log(popularityArray);
-
-            for (let i = 0; i < 10; i++) {
-
+                return [highlighted, dimmed]
             }
 
-            // Top Artists list code below
+
             console.log(genreData)
             console.log(songData)
+            // Top lists code - compiles all the data necessary for top lists into the HTML via jQuery
             for (i = 0; i < 10; i++) {
                 // console.log(songData.items[i].artists[0].name)
                 $(`#artist-image-${i}`).attr('src', genreData.items[i].images[2].url);
@@ -605,14 +573,16 @@ if (error) {
                 $(`#song-play-${i}`).click({uri: songData.items[i].uri, uriType: "song"}, playSpotify);
                 $(`#artist-play-${i}`).click({uri: genreData.items[i].uri, uriType: "artist"}, playSpotify);
 
-                $(`#song-popularity-${i} .highlighted`).text(popularityArray[i][0]);
-                $(`#song-popularity-${i} .dimmed`).text(popularityArray[i][1]);
+                const songPop = Math.round(rescalePopularity(songData.items[i].popularity, 30, 90));
+                $(`#song-popularity-${i} .highlighted`).text(compilePopularity(songPop)[0]);
+                $(`#song-popularity-${i} .dimmed`).text(compilePopularity(songPop)[1]);
 
                 $(`#song-duration-${i}`).text(refactorDuration(songData.items[i].duration_ms));
             }
 
+
             // See More and Show Less logic
-            let moreOrLess = 'less';
+            let moreOrLess = 'less'; // Could've (should've?) made this boolean but this is more entertaining
             const seeMoreLess = function seeMoreLess(event) {
                 const type = event.data.type;
                 if (moreOrLess === 'less') {
@@ -699,7 +669,7 @@ if (error) {
                     const ctx = canvas.getContext('2d');
 
                     // Clean up the rough canvas edges
-                    const dpi = 2; //FIXME this needs to be tested on mobile to see if 2 works and/or if the original (window.devicePixelRatio) actually destroys itself
+                    const dpi = 2; // Hard setting 2 seems like the best solution for now
                     canvas.setAttribute('height', canvas.clientHeight * dpi);
                     canvas.setAttribute('width', canvas.clientWidth * dpi);
 

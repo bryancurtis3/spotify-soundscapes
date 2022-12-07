@@ -15,15 +15,11 @@ const querystring = require('querystring');
 const cookieParser = require('cookie-parser');
 const path = require('path');
 
-
 const app = express();
-
-console.log("ID: " + process.env.CLIENT_ID);
-console.log("SECRET: " + process.env.CLIENT_SECRET);
 
 const CLIENT_ID = process.env.CLIENT_ID; // Your client id
 const CLIENT_SECRET = process.env.CLIENT_SECRET; // Your secret
-var redirect_uri = 'https://spotify-soundscapes.cyclic.app/callback'; // Your redirect uri
+const redirect_uri = process.env.BASE_URL; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters
@@ -41,7 +37,6 @@ var generateRandomString = function(length) {
 };
 
 var stateKey = 'spotify_auth_state';
-console.log("test")
 
 // === System Configuration
 app.use(express.static(__dirname + '/public'))
