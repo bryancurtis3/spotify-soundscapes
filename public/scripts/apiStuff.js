@@ -557,27 +557,36 @@ if (error) {
             // Top lists code - compiles all the data necessary for top lists into the HTML via jQuery
             for (i = 0; i < 10; i++) {
                 // console.log(songData.items[i].artists[0].name)
-                $(`#artist-image-${i}`).attr('src', genreData.items[i].images[2].url);
-                $(`#artist-name-${i}`).text(genreData.items[i].name);
+                const artist = genreData.items[i];
+                const song = songData.items[i];
 
-                $(`#song-image-${i}`).attr('src', songData.items[i].album.images[2].url);
-                $(`#song-name-${i}`).text(songData.items[i].name);
+                $(`#artist-li-${i}`).dblclick({uri: artist.uri, uriType: "artist"}, playSpotify)
+                $(`#song-li-${i}`).dblclick({uri: song.uri, uriType: "song"}, playSpotify)
 
-                $(`#album-link-${i}`).attr('href', songData.items[i].album.external_urls.spotify);
+                $(`#artist-image-${i}`).attr('src', artist.images[2].url);
+                $(`#artist-name-${i}`).text(artist.name);
 
-                $(`#artist-name-${i}`).attr('href', genreData.items[i].external_urls.spotify)
-                $(`#song-name-${i}`).attr('href', songData.items[i].external_urls.spotify)
+                $(`#song-image-${i}`).attr('src', song.album.images[2].url);
+                $(`#song-name-${i}`).text(song.name);
+
+                $(`#album-link-${i}`).attr('href', song.album.external_urls.spotify);
+
+                $(`#artist-name-${i}`).attr('href', artist.external_urls.spotify)
+                $(`#song-name-${i}`).attr('href', song.external_urls.spotify)
                 
-                $(`#song-artist-${i}`).text(songData.items[i].artists[0].name)
-                    .attr('href', songData.items[i].artists[0].external_urls.spotify);
-                $(`#song-play-${i}`).click({uri: songData.items[i].uri, uriType: "song"}, playSpotify);
-                $(`#artist-play-${i}`).click({uri: genreData.items[i].uri, uriType: "artist"}, playSpotify);
+                $(`#song-artist-${i}`).text(song.artists[0].name)
+                    .attr('href', song.artists[0].external_urls.spotify);
 
-                const songPop = Math.round(rescalePopularity(songData.items[i].popularity, 30, 90));
+                $(`#song-play-${i}`).click({uri: song.uri, uriType: "song"}, playSpotify);
+                $(`#song-play-tip-${i}`).text(`Play ${song.name} by ${song.artists[0].name} on Spotify`)
+                $(`#artist-play-${i}`).click({uri: artist.uri, uriType: "artist"}, playSpotify);
+                $(`#artist-play-tip-${i}`).text(`Play ${artist.name} on Spotify`)
+
+                const songPop = Math.round(rescalePopularity(song.popularity, 30, 90));
                 $(`#song-popularity-${i} .highlighted`).text(compilePopularity(songPop)[0]);
                 $(`#song-popularity-${i} .dimmed`).text(compilePopularity(songPop)[1]);
 
-                $(`#song-duration-${i}`).text(refactorDuration(songData.items[i].duration_ms));
+                $(`#song-duration-${i}`).text(refactorDuration(song.duration_ms));
             }
 
 

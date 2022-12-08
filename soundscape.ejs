@@ -59,13 +59,14 @@
 
                         <% i >= 5 ? extended = "extended-artists" : extended = "" %> 
 
-                        <li class="<%= extended %>">
+                        <li class="<%= extended %>" id="artist-li-<%= i %>">
                             <a 
                                 class="fa-solid fa-play num-play" 
                                 id="artist-play-<%= i %>" 
                                 target="_blank" 
                                 rel="noopener noreferrer" 
                                 title="Play Artist on Spotify">
+                                <span class="tooltip" id="artist-play-tip-<%= i %>"></span>
                             </a>
                             <span class="li-number"><%= i + 1 %></span>
                             <img class="li-image" id="artist-image-<%= i %>">
@@ -105,7 +106,7 @@
 
                         <% i >= 5 ? extended = "extended-songs" : extended = "" %> 
 
-                        <li class="<%= extended %>">
+                        <li class="<%= extended %>" id="song-li-<%= i %>">
                             <span class="li-number"><%= i + 1 %></span>
                             <a 
                                 class="fa-solid fa-play num-play" 
@@ -113,6 +114,7 @@
                                 target="_blank" 
                                 rel="noopener noreferrer" 
                                 title="Play Song on Spotify">
+                                <span class="tooltip" id="song-play-tip-<%= i %>"></span>
                             </a>
                             <a 
                                 class="li-image" 

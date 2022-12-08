@@ -157,7 +157,7 @@ h4 {
 }
 .top-artists li, .top-songs li {
   display: grid;
-  grid-template-columns: 45px 55px 1fr 80px 50px;
+  grid-template-columns: 45px 55px 7fr 2fr 50px;
   align-items: center;
   height: 55px;
   border-radius: 3px;
@@ -180,8 +180,12 @@ h4 {
 }
 .top-artists li .num-play, .top-songs li .num-play {
   display: none;
+  position: relative;
   text-decoration: none;
   cursor: pointer;
+}
+.top-artists li .num-play:hover .tooltip, .top-songs li .num-play:hover .tooltip {
+  visibility: visible;
 }
 .top-artists li .li-image, .top-songs li .li-image {
   height: 45px;
@@ -219,6 +223,7 @@ h4 {
 }
 .top-artists li .song-popularity .popularity, .top-songs li .song-popularity .popularity {
   letter-spacing: -4px;
+  padding-bottom: 4px;
 }
 .top-artists li .song-popularity .highlighted, .top-songs li .song-popularity .highlighted {
   color: white;
@@ -239,7 +244,7 @@ h4 {
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 1px;
-  cursor: pointer;
+  cursor: default;
 }
 .see-more-button:hover {
   color: white;
@@ -287,6 +292,24 @@ h4 {
   padding-bottom: 15px;
   margin: 0;
   font-weight: 500;
+}
+
+.tooltip {
+  visibility: hidden;
+  position: absolute;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  width: fit-content;
+  max-width: calc(100vw - 50px);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin-top: -34px;
+  background-color: #3c3c3c;
+  box-shadow: rgba(0, 0, 0, 0.5) 0 2px 10px;
+  padding: 7px 10px;
+  border-radius: 3px;
 }
 
 @media only screen and (max-width: 450px) {
