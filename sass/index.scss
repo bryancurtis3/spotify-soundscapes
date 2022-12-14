@@ -29,27 +29,6 @@ main {
     color: white;
 }
 
-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    height: 50px;
-    padding: 10px 20px;
-    position: fixed;
-    z-index: 2;
-    background-color: rgba(25, 25, 25, .2);
-    box-shadow: 2px 0px 2px 2px rgba(255,255,255,0.1);
-    z-index: 12;
-
-    // testing supports
-    @supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
-        background-color: rgba(25, 25, 25, .03);
-        -webkit-backdrop-filter: blur(5px);
-        backdrop-filter: blur(5px);
-    }
-}
-
 #login-main {
     display: flex;
     flex-direction: column;
@@ -61,7 +40,7 @@ nav {
         font-size: 38px;
         text-align: center;
         margin: 0;
-        margin-top: 50px;
+        margin-top: 3vh;
     }
 
     h3 {
@@ -73,7 +52,7 @@ nav {
         align-self: center;
         padding: 10px 17px 13px 17px;
         position: absolute; // TODO the document flow based around absolute positions should probably change
-        bottom: 150px;
+        bottom: 175px;
         font-size: 18px;
         font-weight: 500;
         text-align: center;
@@ -82,6 +61,7 @@ nav {
         border-radius: 500px;
         background-color: $spotify-green;
         transition: .1s ease-in-out;
+        box-shadow: rgba(45, 45, 45, 0.8) 0 3px 15px;
 
         &:hover {
             transform: scale(1.02);
@@ -114,16 +94,16 @@ nav {
         position: absolute;
         bottom: 0;
         left: 0;
-        background-repeat: repeat;
+        background-repeat: no-repeat;
         background-position: center;
         background-size: cover;
-        background-image: url('../../wave.svg');
+        background-image: url('../../waves.svg');
         z-index: -1;
     }
 
     .wave-desktop {
         display: none;
-        aspect-ratio: 1080/300;
+        aspect-ratio: 1080/150;
         max-height: 275px;
         width: 100%;
         overflow: hidden;
@@ -133,7 +113,7 @@ nav {
         background-repeat: no-repeat;
         background-position: center;
         background-size: cover;
-        background-image: url('../../wave-dekstop.svg');
+        background-image: url('../../waves-desktop.svg');
         z-index: -1;
     }
 
@@ -162,6 +142,7 @@ nav {
             text-decoration: none;
             color: white;
             font-size: 42px;
+            filter: drop-shadow(0 0 8px rgba(45, 45, 45, 1));
         }
     }
 }

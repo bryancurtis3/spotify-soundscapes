@@ -30,27 +30,6 @@ main {
     color: white;
 }
 
-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    height: 50px;
-    padding: 10px 20px;
-    position: fixed;
-    z-index: 2;
-    background-color: rgba(25, 25, 25, .2);
-    box-shadow: 2px 0px 2px 2px rgba(255,255,255,0.1);
-    z-index: 12;
-
-    // testing supports
-    @supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
-        background-color: rgba(25, 25, 25, .03);
-        -webkit-backdrop-filter: blur(5px);
-        backdrop-filter: blur(5px);
-    }
-}
-
 .time {
     // padding-top: 15px;
     width: 100%;
@@ -146,7 +125,7 @@ h4 {
 
 .top-artists, .top-songs {
     padding: 0;
-    margin-top: 0;
+    margin-top: 10px;
 
     .extended-artists, .extended-songs {
         display: none;
@@ -158,6 +137,7 @@ h4 {
         border-bottom: 1px solid hsla(0,0%,100%,.1);;
         border-radius: 0px;
         margin-bottom: 20px;
+        height: 40px;
 
         .legend-title {
             justify-self: baseline;
@@ -170,7 +150,8 @@ h4 {
         .legend-popularity {
             font-size: 12px;
             letter-spacing: 2px;
-            padding-right: 33px;
+            justify-self: right;
+            padding-right: 27px;
         }
 
         &:hover {
@@ -178,10 +159,14 @@ h4 {
         }
     }
 
+    // This ensures that, in the event there aren't enough songs or artists to display, the empty li's are not rendered
+    .no-data {
+        display: none!important;
+    }
 
     li {
         display: grid;
-        grid-template-columns: 45px 55px 7fr 2fr 50px;
+        grid-template-columns: 45px 55px 1fr 80px 50px;
         align-items: center;
         height: 55px;
         border-radius: 3px;
@@ -200,7 +185,7 @@ h4 {
             }
 
             // Accounts for insufficent contrast of dimmed popularity on li hover
-            .song-popularity {
+            .li-popularity {
                 .dimmed {
                     color: rgb(20, 20, 20);
                 }
@@ -218,7 +203,7 @@ h4 {
 
             &:hover {
                 .tooltip {
-                    visibility: visible;
+                    opacity: 1;
                 }
             }
         }
@@ -257,14 +242,14 @@ h4 {
         .li-text {
             display: flex;
             flex-direction: column;
-            padding-left: 15px;
+            padding: 0 15px;
             margin: 0;
             overflow: hidden;
         }
 
-        .song-popularity {
+        .li-popularity {
             display: flex;
-            justify-self: center;
+            // justify-self: center;
 
             .popularity {
                 letter-spacing: -4px;
@@ -354,7 +339,8 @@ h4 {
 }
 
 .tooltip {
-    visibility: hidden;
+    opacity: 0;
+    transition: opacity .1s ease-in-out;
     position: absolute;
     font-family: 'Open Sans', sans-serif; // Font settings here to overide inherited FontAwesome styling
     font-weight: 500;
@@ -398,11 +384,11 @@ h4 {
         grid-column: span 2;
     }
     
-    .legend-popularity, .song-popularity {
+    .legend-popularity, .li-popularity {
         display: none;
     }
 
-    .song-popularity {
+    .li-popularity {
         display: none!important;
     }
 }

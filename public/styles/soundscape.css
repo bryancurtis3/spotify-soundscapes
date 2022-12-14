@@ -22,27 +22,6 @@ main {
   color: white;
 }
 
-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  height: 50px;
-  padding: 10px 20px;
-  position: fixed;
-  z-index: 2;
-  background-color: rgba(25, 25, 25, 0.2);
-  box-shadow: 2px 0px 2px 2px rgba(255, 255, 255, 0.1);
-  z-index: 12;
-}
-@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
-  nav {
-    background-color: rgba(25, 25, 25, 0.03);
-    -webkit-backdrop-filter: blur(5px);
-    backdrop-filter: blur(5px);
-  }
-}
-
 .time {
   width: 100%;
 }
@@ -128,7 +107,7 @@ h4 {
 
 .top-artists, .top-songs {
   padding: 0;
-  margin-top: 0;
+  margin-top: 10px;
 }
 .top-artists .extended-artists, .top-artists .extended-songs, .top-songs .extended-artists, .top-songs .extended-songs {
   display: none;
@@ -139,6 +118,7 @@ h4 {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 0px;
   margin-bottom: 20px;
+  height: 40px;
 }
 .top-artists .list-legend .legend-title, .top-songs .list-legend .legend-title {
   justify-self: baseline;
@@ -150,14 +130,18 @@ h4 {
 .top-artists .list-legend .legend-popularity, .top-songs .list-legend .legend-popularity {
   font-size: 12px;
   letter-spacing: 2px;
-  padding-right: 33px;
+  justify-self: right;
+  padding-right: 27px;
 }
 .top-artists .list-legend:hover, .top-songs .list-legend:hover {
   background-color: #2d2d2d;
 }
+.top-artists .no-data, .top-songs .no-data {
+  display: none !important;
+}
 .top-artists li, .top-songs li {
   display: grid;
-  grid-template-columns: 45px 55px 7fr 2fr 50px;
+  grid-template-columns: 45px 55px 1fr 80px 50px;
   align-items: center;
   height: 55px;
   border-radius: 3px;
@@ -172,7 +156,7 @@ h4 {
 .top-artists li:hover .num-play, .top-songs li:hover .num-play {
   display: block;
 }
-.top-artists li:hover .song-popularity .dimmed, .top-songs li:hover .song-popularity .dimmed {
+.top-artists li:hover .li-popularity .dimmed, .top-songs li:hover .li-popularity .dimmed {
   color: #141414;
 }
 .top-artists li .li-number, .top-artists li .num-play, .top-songs li .li-number, .top-songs li .num-play {
@@ -185,7 +169,7 @@ h4 {
   cursor: pointer;
 }
 .top-artists li .num-play:hover .tooltip, .top-songs li .num-play:hover .tooltip {
-  visibility: visible;
+  opacity: 1;
 }
 .top-artists li .li-image, .top-songs li .li-image {
   height: 45px;
@@ -213,22 +197,21 @@ h4 {
 .top-artists li .li-text, .top-songs li .li-text {
   display: flex;
   flex-direction: column;
-  padding-left: 15px;
+  padding: 0 15px;
   margin: 0;
   overflow: hidden;
 }
-.top-artists li .song-popularity, .top-songs li .song-popularity {
+.top-artists li .li-popularity, .top-songs li .li-popularity {
   display: flex;
-  justify-self: center;
 }
-.top-artists li .song-popularity .popularity, .top-songs li .song-popularity .popularity {
+.top-artists li .li-popularity .popularity, .top-songs li .li-popularity .popularity {
   letter-spacing: -4px;
   padding-bottom: 4px;
 }
-.top-artists li .song-popularity .highlighted, .top-songs li .song-popularity .highlighted {
+.top-artists li .li-popularity .highlighted, .top-songs li .li-popularity .highlighted {
   color: white;
 }
-.top-artists li .song-popularity .dimmed, .top-songs li .song-popularity .dimmed {
+.top-artists li .li-popularity .dimmed, .top-songs li .li-popularity .dimmed {
   color: #4b4b4b;
 }
 .top-artists li .duration, .top-songs li .duration {
@@ -295,7 +278,8 @@ h4 {
 }
 
 .tooltip {
-  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.1s ease-in-out;
   position: absolute;
   font-family: "Open Sans", sans-serif;
   font-weight: 500;
@@ -336,11 +320,11 @@ h4 {
     grid-column: span 2;
   }
 
-  .legend-popularity, .song-popularity {
+  .legend-popularity, .li-popularity {
     display: none;
   }
 
-  .song-popularity {
+  .li-popularity {
     display: none !important;
   }
 }

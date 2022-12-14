@@ -74,12 +74,15 @@ if (error) {
         });
 
 
+
+
         // Scope widened to share data between API calls
         const artistsGenres = {};
         const topGenres = {};
         let topArtists = []; // TODO remove?
         let colors = {};
         let songIds = '';
+        let trackSeeds = '';
         let audioFeatures = {}
 
 
@@ -275,12 +278,14 @@ if (error) {
             let artists = [];
 
             // Assemble easily usable data sets
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < songData.items.length; i++) {
                 songs.push(songData.items[i].name);
                 artists.push(songData.items[i].album.artists[0].name);
                 // if (i < 10) 
                 songIds += songData.items[i].id + ',';
+                if (i < 5) trackSeeds += songData.items[i].id + ',';
             };
+            trackSeeds = trackSeeds.slice(0, -1);
             songIds = songIds.slice(0, -1);
             
             // console.log(songIds);
@@ -560,33 +565,45 @@ if (error) {
                 const artist = genreData.items[i];
                 const song = songData.items[i];
 
-                $(`#artist-li-${i}`).dblclick({uri: artist.uri, uriType: "artist"}, playSpotify)
-                $(`#song-li-${i}`).dblclick({uri: song.uri, uriType: "song"}, playSpotify)
+                // Top Artist list code below
+                if (genreData.items.length > i) {
+                    $(`#artist-li-${i}`).dblclick({uri: artist.uri, uriType: "artist"}, playSpotify)
+                    
+                    $(`#artist-play-${i}`).click({uri: artist.uri, uriType: "artist"}, playSpotify);
+                    $(`#artist-image-${i}`).attr('src', artist.images[2].url);
+                    $(`#artist-name-${i}`).text(artist.name)
+                        .attr('href', artist.external_urls.spotify);
+                    $(`#artist-play-tip-${i}`).text(`Play ${artist.name} on Spotify`);
 
-                $(`#artist-image-${i}`).attr('src', artist.images[2].url);
-                $(`#artist-name-${i}`).text(artist.name);
+                    const artistPop = Math.round(rescalePopularity(artist.popularity, 30, 90));
+                    $(`#artist-popularity-${i} .highlighted`).text(compilePopularity(artistPop)[0]);
+                    $(`#artist-popularity-${i} .dimmed`).text(compilePopularity(artistPop)[1]);
+                } else {
+                    $(`#artist-li-${i}`).attr('class', 'no-data');
+                }
 
-                $(`#song-image-${i}`).attr('src', song.album.images[2].url);
-                $(`#song-name-${i}`).text(song.name);
+                // Top Songs list code below
+                if (songData.items.length > i) {
+                    $(`#song-li-${i}`).dblclick({uri: song.uri, uriType: "song"}, playSpotify)
 
-                $(`#album-link-${i}`).attr('href', song.album.external_urls.spotify);
+                    $(`#song-image-${i}`).attr('src', song.album.images[2].url);
+                    $(`#song-name-${i}`).text(song.name);
+                    $(`#album-link-${i}`).attr('href', song.album.external_urls.spotify);
+                    $(`#song-name-${i}`).attr('href', song.external_urls.spotify)
+                    
+                    $(`#song-artist-${i}`).text(song.artists[0].name)
+                        .attr('href', song.artists[0].external_urls.spotify);
+                    $(`#song-play-${i}`).click({uri: song.uri, uriType: "song"}, playSpotify);
+                    $(`#song-play-tip-${i}`).text(`Play ${song.name} by ${song.artists[0].name} on Spotify`)
 
-                $(`#artist-name-${i}`).attr('href', artist.external_urls.spotify)
-                $(`#song-name-${i}`).attr('href', song.external_urls.spotify)
-                
-                $(`#song-artist-${i}`).text(song.artists[0].name)
-                    .attr('href', song.artists[0].external_urls.spotify);
+                    const songPop = Math.round(rescalePopularity(song.popularity, 30, 90));
+                    $(`#song-popularity-${i} .highlighted`).text(compilePopularity(songPop)[0]);
+                    $(`#song-popularity-${i} .dimmed`).text(compilePopularity(songPop)[1]);
 
-                $(`#song-play-${i}`).click({uri: song.uri, uriType: "song"}, playSpotify);
-                $(`#song-play-tip-${i}`).text(`Play ${song.name} by ${song.artists[0].name} on Spotify`)
-                $(`#artist-play-${i}`).click({uri: artist.uri, uriType: "artist"}, playSpotify);
-                $(`#artist-play-tip-${i}`).text(`Play ${artist.name} on Spotify`)
-
-                const songPop = Math.round(rescalePopularity(song.popularity, 30, 90));
-                $(`#song-popularity-${i} .highlighted`).text(compilePopularity(songPop)[0]);
-                $(`#song-popularity-${i} .dimmed`).text(compilePopularity(songPop)[1]);
-
-                $(`#song-duration-${i}`).text(refactorDuration(song.duration_ms));
+                    $(`#song-duration-${i}`).text(refactorDuration(song.duration_ms));
+                } else {
+                    $(`#song-li-${i}`).attr('class', 'no-data');
+                }
             }
 
 
@@ -622,6 +639,19 @@ if (error) {
                     },
                 })
             }
+
+            $.ajax({
+                url: `https://api.spotify.com/v1/recommendations?seed_tracks=${trackSeeds}`,
+                headers: {
+                'Authorization': 'Bearer ' + access_token
+                },
+                success: function(response) {
+                    console.log(response)
+                },
+                error: function(error) {
+                    console.log(`Error: ${error.responseJSON.error.message}`);
+                }
+            });
 
             $.when(callFeatures()).done(function(featuresRes) {
 
