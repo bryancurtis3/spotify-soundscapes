@@ -40,6 +40,7 @@ main {
 }
 #login-main #login {
   width: 70%;
+  max-width: 400px;
   align-self: center;
   padding: 10px 17px 13px 17px;
   position: absolute;
@@ -52,7 +53,7 @@ main {
   border-radius: 500px;
   background-color: #1DB954;
   transition: 0.1s ease-in-out;
-  box-shadow: rgba(45, 45, 45, 0.8) 0 3px 15px;
+  box-shadow: rgba(29, 185, 84, 0.7) 0 0 15px;
 }
 #login-main #login:hover {
   transform: scale(1.02);

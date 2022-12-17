@@ -1,19 +1,19 @@
 // Local session stuff for API
-sessionStorage.getItem("timeRange") ? timeRange = sessionStorage.getItem("timeRange") : timeRange = ''; // Acts as timeRange declaration
+sessionStorage.getItem('timeRange') ? timeRange = sessionStorage.getItem('timeRange') : timeRange = ''; // Acts as timeRange declaration
 
 // Recent Data
 const recentData = function recentData() {
-    sessionStorage.setItem("timeRange", "time_range=short_term&");
+    sessionStorage.setItem('timeRange', 'time_range=short_term&');
 }
 
 // Default Data
 const defaultData = function defaultData() {
-    sessionStorage.removeItem("timeRange");
+    sessionStorage.removeItem('timeRange');
 }
 
 // Long-term data
 const longTermData = function longTermData() {
-    sessionStorage.setItem("timeRange", "time_range=long_term&");
+    sessionStorage.setItem('timeRange', 'time_range=long_term&');
 }
 
 /**
@@ -82,9 +82,9 @@ if (error) {
         let topArtists = []; // TODO remove?
         let colors = {};
         let songIds = '';
-        let trackSeeds = '';
-        let audioFeatures = {}
-
+        let followingIds = '';
+        let seedTracks = '';
+        let audioFeatures = {};
 
         // Ajax calls built into functions to be fed to .when() functions
         const callArtists = function callArtists() {
@@ -118,29 +118,57 @@ if (error) {
                 }
             });
         }
-        
+
+        const callRecs = function callRecs(seeds, filters) {
+            return $.ajax({
+                url: `https://api.spotify.com/v1/recommendations?seed_tracks=${seeds}&limit=5${filters}`,
+                headers: {
+                'Authorization': 'Bearer ' + access_token
+                },
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(error) {
+                    console.log(`Error: ${error.responseJSON.error.message}`);
+                }
+            });
+        }
+
 
         $.when(callArtists(), callSongs()).done(function(genreRes, songRes){
 
-            const genreData = genreRes[0];
+            /**
+             * The array of the raw top artist data from Spotify
+             */
+            const genreData = genreRes[0].items;
     
             // ===== Genres =====
     
             // Extract data from JSON
             let genres = [];
+            /**
+             * An array of all artist names in order of most to least listened
+             */
             let artistData = [];
-            for (let i = 0; i < genreData.items.length; i++) {
-                artistData.push(genreData.items[i].name);
+            for (let i = 0; i < genreData.length; i++) {
+                artistData.push(genreData[i].name);
+
+                // Compiles array of artist's ID's to check if the user follows them
+                if (i < 9) {
+                    followingIds += genreData[i].id + ',';
+                } else if (i === 10) {
+                    followingIds += genreData[i].id;
+                }
     
-                for (let j = 0; j < genreData.items[i].genres.length; j++) {
-                    genres.push(genreData.items[i].genres[j]);
+                for (let j = 0; j < genreData[i].genres.length; j++) {
+                    genres.push(genreData[i].genres[j]);
                 }
             }
 
             
             let artistIterator = 0;
             for (const artist of artistData) {
-                artistsGenres[artist] = genreData.items[artistIterator].genres
+                artistsGenres[artist] = genreData[artistIterator].genres
                 artistIterator++;
             }
             // console.log(artistsGenres);
@@ -165,7 +193,7 @@ if (error) {
                     if (genreStats[genre] === mostGenres[i]) {
                         topGenres[genre] = mostGenres[i];
                         mostGenres.splice(i, 1);
-                        break; // Break here ensures genres don't canibalize other genres with same total occurences
+                        break; // Break here ensures genres don't canibalize other genres with same total occurences & expedites process
                     };
                 };
             };
@@ -271,21 +299,21 @@ if (error) {
             // SECTION
             // ======== TRACK CODE =========
     
-            const songData = songRes[0];
+            const songData = songRes[0].items;
             // console.log(songData);
     
             let songs = [];
             let artists = [];
 
             // Assemble easily usable data sets
-            for (let i = 0; i < songData.items.length; i++) {
-                songs.push(songData.items[i].name);
-                artists.push(songData.items[i].album.artists[0].name);
+            for (let i = 0; i < songData.length; i++) {
+                songs.push(songData[i].name);
+                artists.push(songData[i].album.artists[0].name);
                 // if (i < 10) 
-                songIds += songData.items[i].id + ',';
-                if (i < 5) trackSeeds += songData.items[i].id + ',';
+                songIds += songData[i].id + ',';
+                if (i < 5) seedTracks += songData[i].id + ',';
             };
-            trackSeeds = trackSeeds.slice(0, -1);
+            seedTracks = seedTracks.slice(0, -1);
             songIds = songIds.slice(0, -1);
             
             // console.log(songIds);
@@ -476,7 +504,7 @@ if (error) {
             /**
              * Tells Spotify which song to play based on the element clicked
              * 
-             * @param {string} event Holds the song URI that needs to be played
+             * @param {string} event Holds the song URI that needs to be played in event.data.uri
              */
             const playSpotify = function playSpotify(event) {
                 if (event.data.uriType == "song") {
@@ -492,7 +520,13 @@ if (error) {
                     },
                     data: JSON.stringify(ajaxData),
                     error: function(error) {
+                        console.log(error)
                         console.log(`Error: ${error.responseJSON.error.message}`);
+                        if (error.responseJSON.error.message == "Player command failed: No active device found") {
+                            alert(`Spotify must already be playing. You can go to Spotify by clicking on the name of the song or artist to initiate playback.`)
+                        } else if (error.responseJSON.error.message === "The access token expired") {
+                            windowwindow.location.replace(window.location.origin);
+                        }
                     }
                 })
             }
@@ -511,10 +545,10 @@ if (error) {
 
             // Get Average Popularity
             let popularity = 0;
-            for (let i = 0; i < genreData.items.length; i++) {
-                popularity += genreData.items[i].popularity;
+            for (let i = 0; i < genreData.length; i++) {
+                popularity += genreData[i].popularity;
             }
-            popularity = popularity / genreData.items.length;
+            popularity = popularity / genreData.length;
 
             /**
              * A function to increase distribution of popularity to better visualize differences
@@ -561,12 +595,12 @@ if (error) {
             console.log(songData)
             // Top lists code - compiles all the data necessary for top lists into the HTML via jQuery
             for (i = 0; i < 10; i++) {
-                // console.log(songData.items[i].artists[0].name)
-                const artist = genreData.items[i];
-                const song = songData.items[i];
+                // console.log(songData[i].artists[0].name)
+                const artist = genreData[i];
+                const song = songData[i];
 
                 // Top Artist list code below
-                if (genreData.items.length > i) {
+                if (genreData.length > i) {
                     $(`#artist-li-${i}`).dblclick({uri: artist.uri, uriType: "artist"}, playSpotify)
                     
                     $(`#artist-play-${i}`).click({uri: artist.uri, uriType: "artist"}, playSpotify);
@@ -583,18 +617,19 @@ if (error) {
                 }
 
                 // Top Songs list code below
-                if (songData.items.length > i) {
-                    $(`#song-li-${i}`).dblclick({uri: song.uri, uriType: "song"}, playSpotify)
+                if (songData.length > i) {
+                    $(`#song-li-${i}`).dblclick({uri: song.uri, uriType: "song"}, playSpotify);
 
                     $(`#song-image-${i}`).attr('src', song.album.images[2].url);
-                    $(`#song-name-${i}`).text(song.name);
+                    $(`#song-name-${i}`).text(song.name)
+                        .attr('href', song.external_urls.spotify);
                     $(`#album-link-${i}`).attr('href', song.album.external_urls.spotify);
-                    $(`#song-name-${i}`).attr('href', song.external_urls.spotify)
+                    
                     
                     $(`#song-artist-${i}`).text(song.artists[0].name)
                         .attr('href', song.artists[0].external_urls.spotify);
                     $(`#song-play-${i}`).click({uri: song.uri, uriType: "song"}, playSpotify);
-                    $(`#song-play-tip-${i}`).text(`Play ${song.name} by ${song.artists[0].name} on Spotify`)
+                    $(`#song-play-tip-${i}`).text(`Play ${song.name} by ${song.artists[0].name} on Spotify`);
 
                     const songPop = Math.round(rescalePopularity(song.popularity, 30, 90));
                     $(`#song-popularity-${i} .highlighted`).text(compilePopularity(songPop)[0]);
@@ -608,23 +643,40 @@ if (error) {
 
 
             // See More and Show Less logic
-            let moreOrLess = 'less'; // Could've (should've?) made this boolean but this is more entertaining
+            let seeMore = false; 
             const seeMoreLess = function seeMoreLess(event) {
                 const type = event.data.type;
-                if (moreOrLess === 'less') {
+                if (seeMore === false) {
                     $(`.see-more-${type}`).text('SHOW LESS');
                     $(`.extended-${type}`).css('display', 'grid');
-                    moreOrLess = 'more'
-                } else if (moreOrLess === 'more') {
+                    seeMore = true;
+                } else if (seeMore === true) {
                     $(`.see-more-${type}`).text('SEE MORE');
                     $(`.extended-${type}`).css('display', 'none');
-                    moreOrLess = 'less'
+                    seeMore = false;
                 }
             }
             $('.see-more-artists').click({type: 'artists'}, seeMoreLess);
             $('.see-more-songs').click({type: 'songs'}, seeMoreLess);
 
 
+            const callFollowing = function callFollowing() {
+                return $.ajax({
+                    url: `https://api.spotify.com/v1/me/following/contains?type=artist&ids=${followingIds}`,
+                    headers: {
+                    'Authorization': 'Bearer ' + access_token
+                    },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(error) {
+                        console.log(`Error: ${error.responseJSON.error.message}`);
+                        // window.location.replace(window.location.origin);   
+                    }
+                });
+            };
+            callFollowing();
+            
     
             // NOTE this runs here inside the callSongs "when" so it has access to all song ids
             const callFeatures = function callFeatures() {
@@ -637,28 +689,16 @@ if (error) {
                     success: function(response) {
                         // console.log(response);
                     },
-                })
-            }
+                });
+            };
 
-            $.ajax({
-                url: `https://api.spotify.com/v1/recommendations?seed_tracks=${trackSeeds}`,
-                headers: {
-                'Authorization': 'Bearer ' + access_token
-                },
-                success: function(response) {
-                    console.log(response)
-                },
-                error: function(error) {
-                    console.log(`Error: ${error.responseJSON.error.message}`);
-                }
-            });
 
             $.when(callFeatures()).done(function(featuresRes) {
 
                 audioFeatures = featuresRes.audio_features;
 
                 for (i = 0; i < audioFeatures.length; i++) {
-                    audioFeatures[i].name = songData.items[i].name;
+                    audioFeatures[i].name = songData[i].name;
                 }
                 console.log(audioFeatures);
 
@@ -720,7 +760,7 @@ if (error) {
                     ctx.lineCap = 'round';
                     ctx.stroke();
 
-                    // Progress itself (color), don't draw if rating is 0
+                    // The progress itself (the color), don't draw if rating is 0
                     if (rating > 0) {
                         ctx.beginPath();
                         ctx.arc(150, 150, 130, percent, 0, true);
@@ -742,16 +782,108 @@ if (error) {
                 generateRatingCircle('popularity', popularity)
             });
 
-        
-            
-        })
+            const refreshRecs = function refreshRecs(recsData) {
+                for (i = 0; i < 5; i++) {
+                    const songRec = recsData[i];
+    
+                    if (recsData.length > i) {
+                        $(`#rec-li-${i}`).dblclick({uri: songRec.uri, uriType: "song"}, playSpotify)
+                        
+                        $(`#rec-play-${i}`).click({uri: songRec.uri, uriType: "song"}, playSpotify);
+                        $(`#rec-image-${i}`).attr('src', songRec.album.images[2].url);
+                        $(`#rec-name-${i}`).text(songRec.name)
+                            .attr('href', songRec.external_urls.spotify);
+
+                        $(`#rec-artist-${i}`).text(songRec.artists[0].name)
+                            .attr('href', songRec.artists[0].external_urls.spotify);
+                        $(`#rec-play-tip-${i}`).text(`Play ${songRec.name} on Spotify`);
+    
+                        const recPop = Math.round(rescalePopularity(songRec.popularity, 30, 90));
+                        $(`#rec-popularity-${i} .highlighted`).text(compilePopularity(recPop)[0]);
+                        $(`#rec-popularity-${i} .dimmed`).text(compilePopularity(recPop)[1]);
+
+                        $(`#rec-duration-${i}`).text(refactorDuration(songRec.duration_ms));
+                    } else {
+                        $(`#rec-li-${i}`).attr('class', 'no-data');
+                    }
+                }
+            }
+
+            $.when(callRecs(seedTracks, '')).done(function (recs) {
+                const recsData = recs.tracks;
+                console.log(recsData);
+                console.log("Recs reced")
+
+                refreshRecs(recsData);
+            });
+
+            /**
+             * Compiles user specified filters into query params and then passes them to Spotify API to get filter recommendations, runs on user click
+             */
+            const submitRecs = function submitRecs() {
+                const filters = {
+                    danceability: $('#danceability-slider').val(),
+                    mode: $('#mode-slider').val(),
+                    popularity: $('#popularity-slider').val(),
+                };
+                
+                let urlFilter = ''
+                for (filter in filters) {
+                    if ($(`#${filter}-check`).is(':checked')) {
+                        urlFilter += `&target_${filter}=${filters[filter]}`
+                    }
+                }
+                console.log(urlFilter)
+
+                $.when(callRecs(seedTracks, urlFilter)).done(function (recs) {
+                    const recsData = recs.tracks;
+                    console.log(recsData);
+                    console.log("Recs reced")
+
+                    refreshRecs(recsData);
+                });
+                // callRecs(seedTracks, urlFilter);
+            }
+            $('#submit').click(submitRecs);
+            });
 
 
 
         // $.when(callFeatures()).done(function(featuresRes)) {
         //     audioFeatures = featuresRes;
         // }
+
+        // NOTE Feature testing in progress below
+
+
+        // FIXME Make this pass the right value to the gradient EDIT i think its fixed
+        const adjustSlider = function adjustSlider(event) {
+            let value = this.value;
+
+            if (event.data) {
+                min = event.data.min;
+                max = event.data.max;
+                range = max - min;
+
+                value = Math.round((value - min) * (100 / range));
+            }
+
+            this.style.background = `linear-gradient(to right, rgb(74, 172, 245), 0%, rgb(74, 172, 245), ${value}%, #4B4B4B ${value}%, #4B4B4B 100%)`;
+        }
         
+
+        $('#danceability-slider').on('input', adjustSlider);
+        $('#mode-slider').on('input', {min: 0, max: 1}, adjustSlider);
+        $('#popularity-slider').on('input', adjustSlider);
+
+        // Add or take away dimming overlay on checkbox active/inactive
+        $('.checkbox').click(function () {
+            console.log("check check")
+            $('.checkbox:checked').siblings('.unselected').css('background-color','rgba(75, 75, 75, 0)');
+            $('.checkbox:not(:checked)').siblings('.unselected').css('background-color','rgba(60, 60, 60, .5)');
+        });
+
+    
 
     } else {
         // TODO this is deprecated and now Idk what this if statement even does

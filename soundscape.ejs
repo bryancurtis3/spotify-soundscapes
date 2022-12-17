@@ -7,6 +7,8 @@
     <title>Spotify Soundscapes</title>
     <meta name="description" content="An easy way to visualize your Spotify listening data over time.">
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="https://i.imgur.com/mp8KZ7W.png">
 
     <!-- === Scripts === -->
     <!-- jQuery -->
@@ -20,6 +22,7 @@
     <link rel="stylesheet" href="../styles/soundscape.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+
 
 </head>
 
@@ -185,6 +188,91 @@
             </article>
         </section>
 
+        <!-- NOTE features testing in progress below -->
+
+        <h4 class="filter-title">Advanced Filters</h4>
+
+        <form class="filters-container">
+
+            <div class="filter-option">
+                <div class="toggle-container">
+                    <input type="checkbox" class="checkbox" id="danceability-check">
+                    <label for="danceability-check"></label>
+                    <div class="unselected"></div>
+                </div>
+                <p class="slider-title">Danceability</p>
+                <div class="slider-container">
+                    <input type="range" class="slider" id="danceability-slider">
+                </div>
+            </div>
+
+            <div class="filter-option">
+                <div class="toggle-container">
+                    <input type="checkbox" class="checkbox" id="mode-check">
+                    <label for="mode-check"></label>
+                    <div class="unselected"></div>
+                </div>
+                <p class="slider-title">Mode</p>
+                <div class="slider-container">
+                    <input type="range" min="0" max="1" class="slider" id="mode-slider">
+                </div>
+            </div>
+
+            <div class="filter-option">
+                <div class="toggle-container">
+                    <input type="checkbox" class="checkbox" id="popularity-check">
+                    <label for="popularity-check"></label>
+                    <div class="unselected"></div>
+                </div>
+                <p class="slider-title">Popularity</p>
+                <div class="slider-container">
+                    <input type="range" class="slider" id="popularity-slider">
+                </div>
+            </div>
+
+
+            <button id="submit">Get Recommendations</button>
+        </form>
+
+        <section class="recs-container">
+            <ul>
+                <% for (let i = 0; i < 5; i++) { %>
+                    <li id="rec-li-<%= i %>">
+                        <a 
+                            class="fa-solid fa-play num-play" 
+                            id="rec-play-<%= i %>" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            title="Play Song on Spotify">
+                            <span class="tooltip" id="rec-play-tip-<%= i %>"></span>
+                        </a>
+                        <span class="li-number"><%= i + 1 %></span>
+                        <img class="li-image" id="rec-image-<%= i %>">
+                        <p class="li-text">
+                            <a 
+                                class="li-name" 
+                                id="rec-name-<%= i %>" 
+                                title="Go to Song & Lyrics on Spotify"
+                                target="_blank" 
+                                rel="noopener noreferrer">
+                            </a>
+                            <a 
+                                class="list-subtext" 
+                                id="rec-artist-<%= i %>" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                title="Go to Artist on Spotify">
+                            </a>
+                        </p>
+                        <div class="li-popularity" id="rec-popularity-<%= i %>">
+                            <span class="popularity highlighted"></span>
+                            <span class="popularity dimmed"></span>
+                        </div>
+                        <span class="duration" id="rec-duration-<%= i %>"></span>
+                    </li>
+                <% } %> 
+            </ul>
+        </section>
 
         <!-- <h4 class="chart-title">Your Top Artists</h4>
         <div class="chart-container" id="bar-container">

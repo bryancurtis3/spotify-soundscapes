@@ -50,7 +50,7 @@ app.get('/login', function(req, res) {
     res.cookie(stateKey, state);
 
     // your application requests authorization
-    const scope = 'user-read-private user-read-email user-top-read user-follow-read user-read-recently-played app-remote-control streaming user-modify-playback-state';
+    const scope = 'user-read-private user-read-email user-top-read user-follow-read user-read-recently-played app-remote-control streaming user-modify-playback-state user-follow-read';
 
     res.redirect('https://accounts.spotify.com/authorize?' +
         querystring.stringify({
@@ -59,7 +59,7 @@ app.get('/login', function(req, res) {
         scope: scope,
         redirect_uri: redirect_uri,
         state: state,
-        // show_dialog: true // TODO remove
+        show_dialog: true // TODO remove
         }));
 });
 

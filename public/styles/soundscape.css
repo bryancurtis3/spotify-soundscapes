@@ -44,25 +44,28 @@ main {
   padding: 8px;
   border: none;
   border-radius: 4px;
-  color: whitesmoke;
-  background-color: #747474;
-  transition: 0.1s ease-in-out;
+  color: white;
+  background-color: rgba(0, 0, 0, 0);
+  border: 2px solid #4b4b4b;
+  transition: 0.05s ease-in-out;
   cursor: pointer;
 }
 .time .time-buttons button:hover {
-  transform: scale(1.02);
-  background-color: #7c7c7c;
+  border: 2px solid whitesmoke;
 }
 .time .time-buttons button:active {
-  transform: scale(1);
-  background-color: #5b5b5b;
+  border: 2px solid #1DB954;
 }
 .time #active-time {
   background-color: #1DB954;
-  transition: 0.1s ease-in-out;
+  transform: scale(0.98);
+  transition: 0.05s ease-in-out;
+  border: none;
+  color: #2d2d2d;
+  font-weight: 600;
 }
 .time #active-time:hover {
-  transform: scale(1);
+  transform: scale(0.98);
 }
 
 .chart-title {
@@ -139,7 +142,8 @@ h4 {
 .top-artists .no-data, .top-songs .no-data {
   display: none !important;
 }
-.top-artists li, .top-songs li {
+
+li {
   display: grid;
   grid-template-columns: 45px 55px 1fr 80px 50px;
   align-items: center;
@@ -147,37 +151,38 @@ h4 {
   border-radius: 3px;
   padding-right: 5px;
 }
-.top-artists li:hover, .top-songs li:hover {
-  background-color: #4b4b4b;
+li:hover {
+  background-color: #4B4B4B;
 }
-.top-artists li:hover .li-number, .top-songs li:hover .li-number {
+li:hover .li-number {
   display: none;
 }
-.top-artists li:hover .num-play, .top-songs li:hover .num-play {
+li:hover .num-play {
   display: block;
 }
-.top-artists li:hover .li-popularity .dimmed, .top-songs li:hover .li-popularity .dimmed {
+li:hover .li-popularity .dimmed {
   color: #141414;
 }
-.top-artists li .li-number, .top-artists li .num-play, .top-songs li .li-number, .top-songs li .num-play {
+li .li-number, li .num-play {
   justify-self: center;
 }
-.top-artists li .num-play, .top-songs li .num-play {
+li .num-play {
   display: none;
   position: relative;
   text-decoration: none;
   cursor: pointer;
 }
-.top-artists li .num-play:hover .tooltip, .top-songs li .num-play:hover .tooltip {
+li .num-play:hover .tooltip {
   opacity: 1;
+  visibility: visible;
 }
-.top-artists li .li-image, .top-songs li .li-image {
+li .li-image {
   height: 45px;
-  border-radius: 3px;
+  border-radius: 2px;
   overflow: hidden;
   justify-self: center;
 }
-.top-artists li .li-name, .top-artists li .list-subtext, .top-songs li .li-name, .top-songs li .list-subtext {
+li .li-name, li .list-subtext {
   text-decoration: none;
   color: white;
   text-overflow: ellipsis;
@@ -186,35 +191,35 @@ h4 {
   width: fit-content;
   max-width: 100%;
 }
-.top-artists li .list-subtext, .top-songs li .list-subtext {
+li .list-subtext {
   font-size: 13px;
   color: #B3B3B3;
 }
-.top-artists li .list-subtext:hover, .top-songs li .list-subtext:hover {
+li .list-subtext:hover {
   color: white;
   text-decoration: underline;
 }
-.top-artists li .li-text, .top-songs li .li-text {
+li .li-text {
   display: flex;
   flex-direction: column;
   padding: 0 15px;
   margin: 0;
   overflow: hidden;
 }
-.top-artists li .li-popularity, .top-songs li .li-popularity {
+li .li-popularity {
   display: flex;
 }
-.top-artists li .li-popularity .popularity, .top-songs li .li-popularity .popularity {
+li .li-popularity .popularity {
   letter-spacing: -4px;
   padding-bottom: 4px;
 }
-.top-artists li .li-popularity .highlighted, .top-songs li .li-popularity .highlighted {
+li .li-popularity .highlighted {
   color: white;
 }
-.top-artists li .li-popularity .dimmed, .top-songs li .li-popularity .dimmed {
-  color: #4b4b4b;
+li .li-popularity .dimmed {
+  color: #4B4B4B;
 }
-.top-artists li .duration, .top-songs li .duration {
+li .duration {
   color: #B3B3B3;
   font-size: 13px;
   font-weight: 400;
@@ -277,8 +282,139 @@ h4 {
   font-weight: 500;
 }
 
+.filter-title {
+  margin-top: 10px;
+}
+
+.filters-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+  justify-content: space-evenly;
+  gap: 20px;
+  width: 100%;
+  margin-top: 20px;
+}
+.filters-container .filter-option {
+  position: relative;
+  border-radius: 4px;
+  padding: 5px 7px;
+  background-color: #323232;
+}
+.filters-container .filter-option:has(.checkbox:checked) {
+  box-shadow: rgba(0, 0, 0, 0.4) 0 0 12px;
+}
+.filters-container .filter-option #popularity-toggle {
+  width: 30px;
+}
+.filters-container .filter-option .slider-title {
+  width: fit-content;
+  white-space: nowrap;
+  overflow: hidden;
+  margin: 0 auto;
+  text-align: center;
+}
+.filters-container .filter-option .slider-container {
+  height: 40px;
+  display: grid;
+  place-items: center;
+  padding-bottom: 5px;
+}
+.filters-container .filter-option .slider-container .slider {
+  background: linear-gradient(to right, #4aacf5, 0%, #4aacf5, 50%, #4B4B4B 50%, #4B4B4B 100%);
+  border-radius: 8px;
+  height: 10px;
+  outline: none;
+  transition: background 450ms ease-in;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.filters-container .filter-option .slider-container #mode-slider {
+  background: linear-gradient(to right, #4aacf5, 0%, #4aacf5, 100%, #4b4b4b 100%, #4b4b4b 100%);
+}
+.filters-container .filter-option .slider-container .slider::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: ew-resize;
+  background: #B3B3B3;
+}
+.filters-container .filter-option .toggle-container .checkbox {
+  display: none;
+  position: relative;
+  user-select: none;
+  transition: 0.2s ease-in-out;
+  height: 30px;
+  width: 50px;
+  border: 1px solid #e4e4e4;
+  border-radius: 60px;
+  opacity: 0;
+}
+.filters-container .filter-option .toggle-container label {
+  position: relative;
+  display: block;
+  transition: 0.2s ease;
+  height: 20px;
+  width: 38px;
+  border-radius: 60px;
+  user-select: none;
+  cursor: pointer;
+  outline: none;
+  z-index: 2;
+}
+.filters-container .filter-option .toggle-container label::before, .filters-container .filter-option .toggle-container label::after {
+  display: block;
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  bottom: 1px;
+  right: 1px;
+  content: "";
+  transition: 0.1s ease-in-out;
+}
+.filters-container .filter-option .toggle-container label::before {
+  background-color: #505050;
+  border-radius: 30px;
+}
+.filters-container .filter-option .toggle-container label::after {
+  width: 18px;
+  background-color: #f0f0f0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  border-radius: 100%;
+}
+.filters-container .filter-option .toggle-container .checkbox:checked + label {
+  content: "FIX THIS";
+}
+.filters-container .filter-option .toggle-container .checkbox:checked + label::before {
+  background-color: #1DB954;
+}
+.filters-container .filter-option .toggle-container .checkbox:checked + label::after {
+  margin-left: 18px;
+}
+.filters-container .filter-option .unselected {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  height: 100%;
+  width: 100%;
+  pointer-events: none;
+  border-radius: 4px;
+  background-color: rgba(60, 60, 60, 0.5);
+}
+
+.recs-container {
+  width: 100%;
+}
+.recs-container ul {
+  margin: 0;
+  padding: 0;
+}
+
 .tooltip {
   opacity: 0;
+  visibility: hidden;
   transition: opacity 0.1s ease-in-out;
   position: absolute;
   font-family: "Open Sans", sans-serif;
@@ -303,6 +439,10 @@ h4 {
 
   .chart-container {
     width: calc(100vw - 20px);
+  }
+
+  .filters-container {
+    gap: 10px;
   }
 }
 @media only screen and (max-width: 525px) {
