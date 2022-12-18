@@ -90,7 +90,7 @@ main {
     font-size: 32px;
     font-weight: 600;
     text-align: center;
-    margin: 15px 0;
+    padding: 10px 0 15px 0;
 }
 
 .chart-container {
@@ -297,6 +297,7 @@ li {
 .all-ratings {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+    row-gap: 20px;
     place-items: center;
     padding-top: 20px;
     width: 100%;
@@ -334,29 +335,59 @@ li {
             margin: 0;
             font-size: 52px;
             font-weight: 500;
+            line-height: 80px;
             align-self: end;
         }
     
         .rating-title {
-            padding-bottom: 15px;
+            padding-bottom: 20px;
             margin: 0;
             font-weight: 500;
         }
     }
 }
 
+.recs-container {
+    width: 100%;
+    padding-top: 25px;
+
+    ul {
+        margin: 0;
+        padding: 10px 0;
+    }
+
+    #rec-refresh {
+        background: none;
+        border: none;
+        padding-left: 10px;
+        color: $light-text;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        cursor: default;
+    
+        &:hover {
+            color: white;
+        }
+    }
+}
+
 .filter-title {
-    margin-top: 10px;
+    padding-top: 20px;
 }
 
 .filters-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
     justify-content: space-evenly;
-    gap: 20px;
+    gap: 15px;
     width: 100%;
     margin-top: 20px;
-    // padding: 0 5px;
+    padding: 15px;
+    box-shadow: inset rgba(0, 0, 0, .4) 0 0 12px;
+    border-radius: 3px;
+
+
 
     .filter-option {
         position: relative;
@@ -365,7 +396,7 @@ li {
         background-color: rgb(50, 50, 50);
 
         &:has(.checkbox:checked) {
-            box-shadow: rgba(0, 0, 0, .4) 0 0 12px;
+            box-shadow: rgba(10, 10, 10, .4) 0 0 12px;
         }
 
         #popularity-toggle {
@@ -384,7 +415,7 @@ li {
             height: 40px;
             display: grid;
             place-items: center;
-            padding-bottom: 5px;
+            padding: 5px 0;
         
             .slider {
                 background: linear-gradient(to right, rgb(74, 172, 245), 0%, 
@@ -397,7 +428,7 @@ li {
                 -webkit-appearance: none;
             }
 
-            // Fixes mode default gradient fill
+            // Fixes mode slider's default gradient fill being 50% instead of 100%
             #mode-slider {
                 background: linear-gradient(to right, rgb(74, 172, 245), 0%, rgb(74, 172, 245), 100%, rgb(75, 75, 75) 100%, rgb(75, 75, 75) 100%);
             }
@@ -466,8 +497,6 @@ li {
             .checkbox:checked {
 
                 & + label {
-                    content: 'FIX THIS';
-
                     &::before {
                         background-color: $spotify-green;
                     }
@@ -486,19 +515,9 @@ li {
             z-index: 1;
             height: 100%;
             width: 100%;
-            pointer-events: none;
             border-radius: 4px;
             background-color: rgba(60, 60, 60, .5);
         }
-    }
-}
-
-.recs-container {
-    width: 100%;
-
-    ul {
-        margin: 0;
-        padding: 0;
     }
 }
 
@@ -525,7 +544,7 @@ li {
 
 @media only screen and (max-width: 450px) {
     main {
-        padding: 0 10px;
+        padding: 10px;
     }
 
     .chart-container {
@@ -534,6 +553,7 @@ li {
 
     .filters-container {
         gap: 10px;
+        padding: 10px;
     }
 }
 
@@ -559,6 +579,12 @@ li {
 
     .li-popularity {
         display: none!important;
+    }
+}
+
+@media only screen and (min-width: 750px) {
+    .filters-container {
+        width: 734px; // Fixes filters grid auto wrapping to 4 & 2 by limmiting width barely below the natural max (still looks good/nomral
     }
 }
 

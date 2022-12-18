@@ -72,7 +72,7 @@ main {
   font-size: 32px;
   font-weight: 600;
   text-align: center;
-  margin: 15px 0;
+  padding: 10px 0 15px 0;
 }
 
 .chart-container {
@@ -241,6 +241,7 @@ li .duration {
 .all-ratings {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
+  row-gap: 20px;
   place-items: center;
   padding-top: 20px;
   width: 100%;
@@ -274,25 +275,51 @@ li .duration {
   margin: 0;
   font-size: 52px;
   font-weight: 500;
+  line-height: 80px;
   align-self: end;
 }
 .all-ratings .rating-container .rating-title {
-  padding-bottom: 15px;
+  padding-bottom: 20px;
   margin: 0;
   font-weight: 500;
 }
 
+.recs-container {
+  width: 100%;
+  padding-top: 25px;
+}
+.recs-container ul {
+  margin: 0;
+  padding: 10px 0;
+}
+.recs-container #rec-refresh {
+  background: none;
+  border: none;
+  padding-left: 10px;
+  color: #B3B3B3;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: default;
+}
+.recs-container #rec-refresh:hover {
+  color: white;
+}
+
 .filter-title {
-  margin-top: 10px;
+  padding-top: 20px;
 }
 
 .filters-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
   justify-content: space-evenly;
-  gap: 20px;
+  gap: 15px;
   width: 100%;
   margin-top: 20px;
+  padding: 15px;
+  box-shadow: inset rgba(0, 0, 0, 0.4) 0 0 12px;
+  border-radius: 3px;
 }
 .filters-container .filter-option {
   position: relative;
@@ -301,7 +328,7 @@ li .duration {
   background-color: #323232;
 }
 .filters-container .filter-option:has(.checkbox:checked) {
-  box-shadow: rgba(0, 0, 0, 0.4) 0 0 12px;
+  box-shadow: rgba(10, 10, 10, 0.4) 0 0 12px;
 }
 .filters-container .filter-option #popularity-toggle {
   width: 30px;
@@ -317,7 +344,7 @@ li .duration {
   height: 40px;
   display: grid;
   place-items: center;
-  padding-bottom: 5px;
+  padding: 5px 0;
 }
 .filters-container .filter-option .slider-container .slider {
   background: linear-gradient(to right, #4aacf5, 0%, #4aacf5, 50%, #4B4B4B 50%, #4B4B4B 100%);
@@ -383,9 +410,6 @@ li .duration {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   border-radius: 100%;
 }
-.filters-container .filter-option .toggle-container .checkbox:checked + label {
-  content: "FIX THIS";
-}
 .filters-container .filter-option .toggle-container .checkbox:checked + label::before {
   background-color: #1DB954;
 }
@@ -399,17 +423,8 @@ li .duration {
   z-index: 1;
   height: 100%;
   width: 100%;
-  pointer-events: none;
   border-radius: 4px;
   background-color: rgba(60, 60, 60, 0.5);
-}
-
-.recs-container {
-  width: 100%;
-}
-.recs-container ul {
-  margin: 0;
-  padding: 0;
 }
 
 .tooltip {
@@ -434,7 +449,7 @@ li .duration {
 
 @media only screen and (max-width: 450px) {
   main {
-    padding: 0 10px;
+    padding: 10px;
   }
 
   .chart-container {
@@ -443,6 +458,7 @@ li .duration {
 
   .filters-container {
     gap: 10px;
+    padding: 10px;
   }
 }
 @media only screen and (max-width: 525px) {
@@ -466,6 +482,11 @@ li .duration {
 
   .li-popularity {
     display: none !important;
+  }
+}
+@media only screen and (min-width: 750px) {
+  .filters-container {
+    width: 734px;
   }
 }
 #button {

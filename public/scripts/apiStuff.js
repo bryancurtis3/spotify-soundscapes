@@ -126,7 +126,7 @@ if (error) {
                 'Authorization': 'Bearer ' + access_token
                 },
                 success: function(response) {
-                    console.log(response);
+                    // console.log(response);
                 },
                 error: function(error) {
                     console.log(`Error: ${error.responseJSON.error.message}`);
@@ -520,12 +520,11 @@ if (error) {
                     },
                     data: JSON.stringify(ajaxData),
                     error: function(error) {
-                        console.log(error)
                         console.log(`Error: ${error.responseJSON.error.message}`);
                         if (error.responseJSON.error.message == "Player command failed: No active device found") {
                             alert(`Spotify must already be playing. You can go to Spotify by clicking on the name of the song or artist to initiate playback.`)
                         } else if (error.responseJSON.error.message === "The access token expired") {
-                            windowwindow.location.replace(window.location.origin);
+                            window.location.replace(window.location.origin);
                         }
                     }
                 })
@@ -708,6 +707,7 @@ if (error) {
                 let loudness = 0;
                 let mode = 0;
                 let valence = 0;
+                let tempo = 0;
 
                 for (song of audioFeatures) {
                     acousticness += song.acousticness;
@@ -716,13 +716,17 @@ if (error) {
                     loudness += song.loudness;
                     mode += song.mode;
                     valence += song.valence;
+                    tempo += song.tempo;
                 }
+
+                const divisor = audioFeatures.length * 100;
                 acousticness = acousticness / audioFeatures.length * 100;
                 danceability = danceability / audioFeatures.length * 100;
                 energy = energy / audioFeatures.length * 100;
                 // loudness = loudness / audioFeatures.length * 100; Loudness is a weird negative value
                 mode = mode / audioFeatures.length * 100;
                 valence = valence / audioFeatures.length * 100;
+                tempo = tempo / audioFeatures.length;
 
                 console.log(acousticness);
                 console.log(danceability);
@@ -730,6 +734,7 @@ if (error) {
                 console.log(loudness);
                 console.log(mode);
                 console.log(valence);
+                console.log(tempo);
 
                 // TODO remove "title" param if I decide to stick with variables and just rename them to what I want the titles to be
                 /**
@@ -741,8 +746,16 @@ if (error) {
                  */
                 function generateRatingCircle(category, rating, title) {
                     console.log(category + ': ' + rating);
+
+                    // Tempo needs special treatment (for its weird range (40-200))
+                    const originalRating = rating;
+                    if (category == 'tempo') {
+                        rating = Math.round((tempo - 40) * (100 / 160));
+                    }
                     
                     const percent = rating * (Math.PI*2 / 100); // Create's a percent from 0-100 in radians
+
+                    if (category == 'tempo') rating = originalRating; // Also for tempo
 
                     const canvas = document.getElementById(category);
                     const ctx = canvas.getContext('2d');
@@ -779,17 +792,58 @@ if (error) {
 
                 generateRatingCircle('danceability', danceability, 'Partyness');
                 generateRatingCircle('mode', mode);
-                generateRatingCircle('popularity', popularity)
+                generateRatingCircle('popularity', popularity);
+                generateRatingCircle('valence', valence);
+                generateRatingCircle('tempo', tempo);
+                generateRatingCircle('energy', energy);
             });
 
-            const refreshRecs = function refreshRecs(recsData) {
+
+            const filters = {
+                danceability: $('#danceability-slider').val(),
+                mode: $('#mode-slider').val(),
+                popularity: $('#popularity-slider').val(),
+                valence: $('#valence-slider').val(),
+                tempo: $('#tempo-slider').val(),
+                energy: $('#energy-slider').val()
+            };
+            /**
+             * Compiles user specified filters into query params and then passes them to Spotify API to get filter recommendations, runs on user click
+             */
+            const submitRecs = function submitRecs() {
+                
+                let urlFilter = ''
+                for (filter in filters) {
+                    if ($(`#${filter}-check`).is(':checked')) {
+                        urlFilter += `&target_${filter}=${filters[filter]}`
+                    }
+                }
+                console.log(urlFilter);
+
+                $.when(callRecs(seedTracks, urlFilter)).done(function (recs) {
+                    const recsData = recs.tracks;
+                    console.log(recsData);
+                    console.log("Recs reced");
+                    refreshRecs(recsData);
+                });
+            }
+
+            /**
+             * Handles updating of UI with new data after submitRecs runs
+             * @param {array} recsData The array of tracks returned after the API call
+             */
+             const refreshRecs = function refreshRecs(recsData) {
                 for (i = 0; i < 5; i++) {
                     const songRec = recsData[i];
     
                     if (recsData.length > i) {
-                        $(`#rec-li-${i}`).dblclick({uri: songRec.uri, uriType: "song"}, playSpotify)
-                        
+                        // Unbinds added to prevent click events stacking on elements on refresh
+                        $(`#rec-li-${i}`).unbind();
+                        $(`#rec-play-${i}`).unbind();
+
+                        $(`#rec-li-${i}`).dblclick({uri: songRec.uri, uriType: "song"}, playSpotify);
                         $(`#rec-play-${i}`).click({uri: songRec.uri, uriType: "song"}, playSpotify);
+
                         $(`#rec-image-${i}`).attr('src', songRec.album.images[2].url);
                         $(`#rec-name-${i}`).text(songRec.name)
                             .attr('href', songRec.external_urls.spotify);
@@ -809,54 +863,20 @@ if (error) {
                 }
             }
 
+
+            $('#rec-refresh').click(submitRecs);
+
+            // Initial recs call
             $.when(callRecs(seedTracks, '')).done(function (recs) {
                 const recsData = recs.tracks;
                 console.log(recsData);
-                console.log("Recs reced")
 
                 refreshRecs(recsData);
             });
+        });
 
-            /**
-             * Compiles user specified filters into query params and then passes them to Spotify API to get filter recommendations, runs on user click
-             */
-            const submitRecs = function submitRecs() {
-                const filters = {
-                    danceability: $('#danceability-slider').val(),
-                    mode: $('#mode-slider').val(),
-                    popularity: $('#popularity-slider').val(),
-                };
-                
-                let urlFilter = ''
-                for (filter in filters) {
-                    if ($(`#${filter}-check`).is(':checked')) {
-                        urlFilter += `&target_${filter}=${filters[filter]}`
-                    }
-                }
-                console.log(urlFilter)
-
-                $.when(callRecs(seedTracks, urlFilter)).done(function (recs) {
-                    const recsData = recs.tracks;
-                    console.log(recsData);
-                    console.log("Recs reced")
-
-                    refreshRecs(recsData);
-                });
-                // callRecs(seedTracks, urlFilter);
-            }
-            $('#submit').click(submitRecs);
-            });
-
-
-
-        // $.when(callFeatures()).done(function(featuresRes)) {
-        //     audioFeatures = featuresRes;
-        // }
 
         // NOTE Feature testing in progress below
-
-
-        // FIXME Make this pass the right value to the gradient EDIT i think its fixed
         const adjustSlider = function adjustSlider(event) {
             let value = this.value;
 
@@ -875,12 +895,17 @@ if (error) {
         $('#danceability-slider').on('input', adjustSlider);
         $('#mode-slider').on('input', {min: 0, max: 1}, adjustSlider);
         $('#popularity-slider').on('input', adjustSlider);
+        $('#valence-slider').on('input', {min: 0, max: 1},adjustSlider);
+        $('#tempo-slider').on('input', {min: 40, max: 200},adjustSlider);
+        $('#energy-slider').on('input', {min: 0, max: 1},adjustSlider);
+
+
+
 
         // Add or take away dimming overlay on checkbox active/inactive
         $('.checkbox').click(function () {
-            console.log("check check")
-            $('.checkbox:checked').siblings('.unselected').css('background-color','rgba(75, 75, 75, 0)');
-            $('.checkbox:not(:checked)').siblings('.unselected').css('background-color','rgba(60, 60, 60, .5)');
+            $('.checkbox:checked').siblings('.unselected').css('display','none');
+            $('.checkbox:not(:checked)').siblings('.unselected').css('display','block');
         });
 
     

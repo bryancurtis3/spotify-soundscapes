@@ -161,9 +161,20 @@
             </article>
         </section>
 
-        <!-- Ratings are drawn individually in JS so aren't creating with EJS -->
+        <h4>Your Ratings</h4>
         <section class="all-ratings">
-            <article class="rating-container">
+            <% const ratingNames = ['danceability', 'mode', 'popularity', 'valence', 'tempo', 'energy'] %> 
+            <% for (let i = 0; i < ratingNames.length; i++) { %> 
+                <article class="rating-container">
+                    <canvas id="<%= ratingNames[i] %>" class="rating-canvas"></canvas>
+                    <div class="circle">
+                        <p id="<%= ratingNames[i] %>-number" class="rating-number"></p>
+                        <p id="<%= ratingNames[i] %>-title" class="rating-title"></p>
+                    </div>
+                </article>
+            <% } %> 
+
+            <!-- <article class="rating-container">
                 <canvas id="danceability" class="rating-canvas"></canvas>
                 <div class="circle">
                     <p id="danceability-number" class="rating-number"></p>
@@ -185,12 +196,55 @@
                     <p id="popularity-number" class="rating-number"></p>
                     <p id="popularity-title" class="rating-title"></p>
                 </div>
-            </article>
+            </article> -->
         </section>
 
         <!-- NOTE features testing in progress below -->
 
-        <h4 class="filter-title">Advanced Filters</h4>
+        <section class="recs-container">
+            <h4>Your Top Recommendations</h4>
+
+            <ul>
+                <% for (let i = 0; i < 5; i++) { %>
+                    <li id="rec-li-<%= i %>">
+                        <a 
+                            class="fa-solid fa-play num-play" 
+                            id="rec-play-<%= i %>" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            title="Play Song on Spotify">
+                            <span class="tooltip" id="rec-play-tip-<%= i %>"></span>
+                        </a>
+                        <span class="li-number"><%= i + 1 %></span>
+                        <img class="li-image" id="rec-image-<%= i %>">
+                        <p class="li-text">
+                            <a 
+                                class="li-name" 
+                                id="rec-name-<%= i %>" 
+                                title="Go to Song & Lyrics on Spotify"
+                                target="_blank" 
+                                rel="noopener noreferrer">
+                            </a>
+                            <a 
+                                class="list-subtext" 
+                                id="rec-artist-<%= i %>" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                title="Go to Artist on Spotify">
+                            </a>
+                        </p>
+                        <div class="li-popularity" id="rec-popularity-<%= i %>">
+                            <span class="popularity highlighted"></span>
+                            <span class="popularity dimmed"></span>
+                        </div>
+                        <span class="duration" id="rec-duration-<%= i %>"></span>
+                    </li>
+                <% } %> 
+            </ul>
+            <button id="rec-refresh">Refresh</button>
+        </section>
+
+        <h4 class="filter-title">Advanced Recommendation Filters</h4>
 
         <form class="filters-container">
 
@@ -230,49 +284,43 @@
                 </div>
             </div>
 
+            <div class="filter-option">
+                <div class="toggle-container">
+                    <input type="checkbox" class="checkbox" id="valence-check">
+                    <label for="valence-check"></label>
+                    <div class="unselected"></div>
+                </div>
+                <p class="slider-title">Valence</p>
+                <div class="slider-container">
+                    <input type="range" min="0" max="1" step=".01" class="slider" id="valence-slider">
+                </div>
+            </div>
 
-            <button id="submit">Get Recommendations</button>
+            <div class="filter-option">
+                <div class="toggle-container">
+                    <input type="checkbox" class="checkbox" id="tempo-check">
+                    <label for="tempo-check"></label>
+                    <div class="unselected"></div>
+                </div>
+                <p class="slider-title">Tempo</p>
+                <div class="slider-container">
+                    <input type="range" min="40" max="200" class="slider" id="tempo-slider">
+                </div>
+            </div>
+
+            <div class="filter-option">
+                <div class="toggle-container">
+                    <input type="checkbox" class="checkbox" id="energy-check">
+                    <label for="energy-check"></label>
+                    <div class="unselected"></div>
+                </div>
+                <p class="slider-title">Energy</p>
+                <div class="slider-container">
+                    <input type="range" min="0" max="1" step=".01" class="slider" id="energy-slider">
+                </div>
+            </div>
         </form>
 
-        <section class="recs-container">
-            <ul>
-                <% for (let i = 0; i < 5; i++) { %>
-                    <li id="rec-li-<%= i %>">
-                        <a 
-                            class="fa-solid fa-play num-play" 
-                            id="rec-play-<%= i %>" 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
-                            title="Play Song on Spotify">
-                            <span class="tooltip" id="rec-play-tip-<%= i %>"></span>
-                        </a>
-                        <span class="li-number"><%= i + 1 %></span>
-                        <img class="li-image" id="rec-image-<%= i %>">
-                        <p class="li-text">
-                            <a 
-                                class="li-name" 
-                                id="rec-name-<%= i %>" 
-                                title="Go to Song & Lyrics on Spotify"
-                                target="_blank" 
-                                rel="noopener noreferrer">
-                            </a>
-                            <a 
-                                class="list-subtext" 
-                                id="rec-artist-<%= i %>" 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
-                                title="Go to Artist on Spotify">
-                            </a>
-                        </p>
-                        <div class="li-popularity" id="rec-popularity-<%= i %>">
-                            <span class="popularity highlighted"></span>
-                            <span class="popularity dimmed"></span>
-                        </div>
-                        <span class="duration" id="rec-duration-<%= i %>"></span>
-                    </li>
-                <% } %> 
-            </ul>
-        </section>
 
         <!-- <h4 class="chart-title">Your Top Artists</h4>
         <div class="chart-container" id="bar-container">
