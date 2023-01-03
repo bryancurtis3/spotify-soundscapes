@@ -286,6 +286,7 @@ if (access_token && !error) {
                             titleFont: {
                                 size: 16
                             },
+                            backgroundColor: 'rgba(60, 60, 60, .9)',
                             callbacks: {
                                 footer: footer
                             }
