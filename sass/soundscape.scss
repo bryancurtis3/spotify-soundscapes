@@ -6,6 +6,7 @@ $other: #747474;
 $testing: #838383;
 $light-text: #B3B3B3;
 $dark-75: #4B4B4B;
+$progress: #4AACF5;
 
 
 * {
@@ -47,11 +48,16 @@ main {
         grid-template-columns: 1fr 1fr 1fr;
         gap: 3%;
         padding: 15px 5px 15px 5px;
+        margin: 0 auto;
+        max-width: 625px;
 
         button {
             font-family: 'Open Sans', sans-serif;
             font-size: 16px;
             font-weight: 500;
+            width: 100%;
+            max-width: 175px;
+            justify-self: center;
             padding: 8px;
             border: none;
             border-radius: 4px;
@@ -211,6 +217,9 @@ li {
             .tooltip {
                 opacity: 1;
                 visibility: visible;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
             }
         }
     }
@@ -392,11 +401,47 @@ li {
     .filter-option {
         position: relative;
         border-radius: 4px;
-        padding: 5px 7px;
+        padding: 7px;
         background-color: rgb(50, 50, 50);
 
         &:has(.checkbox:checked) {
             box-shadow: rgba(10, 10, 10, .4) 0 0 12px;
+        }
+
+        .filter-icons {
+            display: flex;
+            justify-content: space-between;
+
+            i {
+                font-size: 20px;
+                padding: 2px 2px 0 0;
+                color: rgb(100, 100, 100);
+                z-index: 1;
+                cursor: pointer;
+
+                &:hover {
+                    color: rgb(140, 140, 140);
+                    // z-index: 5;
+                }
+
+                &:active ~ .tooltip {
+                    opacity: 1;
+                    visibility: visible;
+                }
+            }
+            
+            .tooltip {
+                opacity: 0;
+                margin-left: -5px;
+                width: 100%;
+                bottom: 0;
+                cursor: default;
+
+                &:hover {
+                    opacity: 1;
+                    visibility: visible;
+                }
+            }
         }
 
         #popularity-toggle {
@@ -409,38 +454,57 @@ li {
             overflow: hidden;
             margin: 0 auto;
             text-align: center;
+            padding-top: 7px;
+            font-size: 18px;
         }
 
         .slider-container {
             height: 40px;
             display: grid;
-            place-items: center;
-            padding: 5px 0;
+            grid-template-columns: 4fr 1fr;
+            gap: 10px;
+            justify-items: center;
+            align-items: center;
+            padding: 0 5px;
         
             .slider {
-                background: linear-gradient(to right, rgb(74, 172, 245), 0%, 
-                rgb(74, 172, 245), 50%, $dark-75 50%, $dark-75 100%);
+                background: linear-gradient(to right, $progress, 0%, 
+                $progress, 50%, $dark-75 50%, $dark-75 100%);
                 border-radius: 8px;
                 height: 10px;
+                width: 100%;
                 outline: none;
                 transition: background 450ms ease-in;
                 appearance: none;
                 -webkit-appearance: none;
+
+                &::-webkit-slider-thumb {
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    appearance: none;
+                    -webkit-appearance: none;
+                    cursor: ew-resize;
+                    background: #B3B3B3;
+                    box-shadow: 0 0 6px rgba(0, 0, 0, .3);
+                }
             }
 
             // Fixes mode slider's default gradient fill being 50% instead of 100%
             #mode-slider {
-                background: linear-gradient(to right, rgb(74, 172, 245), 0%, rgb(74, 172, 245), 100%, rgb(75, 75, 75) 100%, rgb(75, 75, 75) 100%);
+                background: linear-gradient(to right, $progress, 0%, $progress, 100%, $dark-75 100%, $dark-75 100%);
             }
-            
-            .slider::-webkit-slider-thumb {
-                width: 20px;
-                height: 20px;
-                border-radius: 50%;
-                appearance: none;
-                -webkit-appearance: none;
-                cursor: ew-resize;
-                background: #B3B3B3;
+
+            .slider-value {
+                // padding-left: 10px;
+                padding: 2px 5px;
+                // border: 2px solid $progress;
+                border-radius: 4px;
+                min-width: 32px;
+                max-width: 41px;
+                text-align: center;
+                color: white;
+                box-shadow: inset rgba(0, 0, 0, .5) 0 0 10px;
             }
         }
 
@@ -531,14 +595,13 @@ li {
     font-size: 14px;
     width: fit-content;
     max-width: calc(100vw - 50px);
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
     margin-top: -34px;
+    color: white;
     background-color: rgb(60, 60, 60);
     box-shadow: rgba(0, 0, 0, 0.5) 0 2px 10px;
     padding: 7px 10px;
     border-radius: 3px;
+    z-index: 4;
 }
 
 // General mobile changes (mostly padding atm)

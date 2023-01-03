@@ -577,7 +577,9 @@ if (access_token && !error) {
             }
             return popularity;
         }
+        console.log(popularity);
         popularity = rescalePopularity(popularity);
+        console.log(popularity);
 
 
         /**
@@ -612,7 +614,7 @@ if (access_token && !error) {
                 $(`#artist-play-${i}`).click({uri: artist.uri, uriType: "artist"}, playSpotify);
                 $(`#artist-image-${i}`).attr('src', artist.images[2].url);
                 $(`#artist-name-${i}`).text(artist.name)
-                    .attr('href', artist.external_urls.spotify);
+                    .attr('href', artist.uri);
                 $(`#artist-play-tip-${i}`).text(`Play ${artist.name} on Spotify`);
 
                 const artistPop = Math.round(rescalePopularity(artist.popularity, 30, 90));
@@ -628,12 +630,12 @@ if (access_token && !error) {
 
                 $(`#song-image-${i}`).attr('src', song.album.images[2].url);
                 $(`#song-name-${i}`).text(song.name)
-                    .attr('href', song.external_urls.spotify);
-                $(`#album-link-${i}`).attr('href', song.album.external_urls.spotify);
+                    .attr('href', song.uri);
+                $(`#album-link-${i}`).attr('href', song.album.uri);
                 
                 
                 $(`#song-artist-${i}`).text(song.artists[0].name)
-                    .attr('href', song.artists[0].external_urls.spotify);
+                    .attr('href', song.artists[0].uri);
                 $(`#song-play-${i}`).click({uri: song.uri, uriType: "song"}, playSpotify);
                 $(`#song-play-tip-${i}`).text(`Play ${song.name} by ${song.artists[0].name} on Spotify`);
 
@@ -703,6 +705,7 @@ if (access_token && !error) {
 
             audioFeatures = featuresRes.audio_features;
 
+            // Provides the returned features with their name instead of just URI
             for (i = 0; i < audioFeatures.length; i++) {
                 audioFeatures[i].name = songData[i].name;
             }
@@ -711,37 +714,38 @@ if (access_token && !error) {
             let acousticness = 0;
             let danceability = 0;
             let energy = 0;
-            let loudness = 0;
+            // let loudness = 0;
             let mode = 0;
             let valence = 0;
             let tempo = 0;
 
-            for (song of audioFeatures) {
-                acousticness += song.acousticness;
-                danceability += song.danceability;
-                energy += song.energy;
-                loudness += song.loudness;
-                mode += song.mode;
-                valence += song.valence;
-                tempo += song.tempo;
+            // for (let i = 0; i < audioFeatures.length; i++) {
+            //     acousticness += audioFeatures[i].acousticness;
+            //     danceability += audioFeatures[i].danceability;
+            //     energy += audioFeatures[i].energy;
+            //     // loudness += audioFeatures[i].loudness;
+            //     mode += audioFeatures[i].mode;
+            //     valence += audioFeatures[i].valence;
+            //     tempo += audioFeatures[i].tempo;
+            // }
+
+            const features = {
+                popularity: popularity,
+                danceability: 0,
+                mode: 0,
+                valence: 0,
+                tempo: 0,
+                energy: 0
+            };
+
+            for (let song of audioFeatures) {
+                features.danceability += song.danceability;
+                features.mode += song.mode;
+                features.energy += song.energy;
+                features.valence += song.valence;
+                features.tempo += song.tempo;
             }
 
-            const divisor = audioFeatures.length * 100;
-            acousticness = acousticness / audioFeatures.length * 100;
-            danceability = danceability / audioFeatures.length * 100;
-            energy = energy / audioFeatures.length * 100;
-            // loudness = loudness / audioFeatures.length * 100; Loudness is a weird negative value
-            mode = mode / audioFeatures.length * 100;
-            valence = valence / audioFeatures.length * 100;
-            tempo = tempo / audioFeatures.length;
-
-            console.log(acousticness);
-            console.log(danceability);
-            console.log(energy);
-            console.log(loudness);
-            console.log(mode);
-            console.log(valence);
-            console.log(tempo);
 
             // TODO remove "title" param if I decide to stick with variables and just rename them to what I want the titles to be
             /**
@@ -756,11 +760,10 @@ if (access_token && !error) {
 
                 // Tempo needs special treatment (for its weird range (40-200))
                 const originalRating = rating;
-                if (category == 'tempo') {
-                    rating = Math.round((tempo - 40) * (100 / 160));
-                }
+                if (category == 'tempo') rating = Math.round((features.tempo - 40) * (100 / 160));
                 
-                const percent = rating * (Math.PI*2 / 100); // Create's a percent from 0-100 in radians
+                
+                const percent = rating * (Math.PI*2 / 100); // Create's a percentage from 0-100 out of radians
 
                 if (category == 'tempo') rating = originalRating; // Also for tempo
 
@@ -797,12 +800,19 @@ if (access_token && !error) {
                 $(`#${category}-title`).text(category.charAt(0).toUpperCase() + category.slice(1));
             };
 
-            generateRatingCircle('danceability', danceability);
-            generateRatingCircle('mode', mode);
-            generateRatingCircle('popularity', popularity);
-            generateRatingCircle('valence', valence);
-            generateRatingCircle('tempo', tempo);
-            generateRatingCircle('energy', energy);
+            for (let feature in features) {
+
+                features[feature] = features[feature] / audioFeatures.length * 100;
+
+                // Tempo handling
+                if (feature == 'tempo') features[feature] = features[feature] / 100; 
+
+                // Fix (undo recalc) for popularity since it was calculated already
+                if (feature == 'popularity') features[feature] = features[feature]  * audioFeatures.length / 100;
+
+                generateRatingCircle(feature, features[feature]);
+            }
+            console.log(features);
         });
 
 
@@ -821,7 +831,7 @@ if (access_token && !error) {
                 energy: $('#energy-slider').val()
             };
             
-            let urlFilter = ''
+            let urlFilter = '';
             for (filter in filters) {
                 if ($(`#${filter}-check`).is(':checked')) {
                     urlFilter += `&target_${filter}=${filters[filter]}`
@@ -855,10 +865,10 @@ if (access_token && !error) {
 
                     $(`#rec-image-${i}`).attr('src', songRec.album.images[2].url);
                     $(`#rec-name-${i}`).text(songRec.name)
-                        .attr('href', songRec.external_urls.spotify);
+                        .attr('href', songRec.uri);
 
                     $(`#rec-artist-${i}`).text(songRec.artists[0].name)
-                        .attr('href', songRec.artists[0].external_urls.spotify);
+                        .attr('href', songRec.artists[0].uri);
                     $(`#rec-play-tip-${i}`).text(`Play ${songRec.name} on Spotify`);
 
                     const recPop = Math.round(rescalePopularity(songRec.popularity, 30, 90));
@@ -889,6 +899,7 @@ if (access_token && !error) {
     // NOTE Feature testing in progress below
     const adjustSlider = function adjustSlider(event) {
         let value = this.value;
+        let displayValue = $(this).val();
 
         if (event.data) {
             min = event.data.min;
@@ -898,7 +909,19 @@ if (access_token && !error) {
             value = Math.round((value - min) * (100 / range));
         }
 
+        // Renders gradient for cuurent value
         this.style.background = `linear-gradient(to right, rgb(74, 172, 245), 0%, rgb(74, 172, 245), ${value}%, #4B4B4B ${value}%, #4B4B4B 100%)`;
+
+        // Fixes valence and energy since they are passed as decimals
+        if (event.target.id.includes('valence') || event.target.id.includes('energy')) {
+            displayValue = Math.round(displayValue * 100);
+        }
+        
+        // Sets the value indictor
+        $(event.target).siblings().text(displayValue);
+
+        // Hard reset fix for mode
+        if (event.target.id.includes('mode') && displayValue === 100) $(event.target).siblings().text('1');
     }
     
 

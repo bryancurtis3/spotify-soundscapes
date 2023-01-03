@@ -36,11 +36,16 @@ main {
   grid-template-columns: 1fr 1fr 1fr;
   gap: 3%;
   padding: 15px 5px 15px 5px;
+  margin: 0 auto;
+  max-width: 625px;
 }
 .time .time-buttons button {
   font-family: "Open Sans", sans-serif;
   font-size: 16px;
   font-weight: 500;
+  width: 100%;
+  max-width: 175px;
+  justify-self: center;
   padding: 8px;
   border: none;
   border-radius: 4px;
@@ -175,6 +180,9 @@ li .num-play {
 li .num-play:hover .tooltip {
   opacity: 1;
   visibility: visible;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 li .li-image {
   height: 45px;
@@ -324,11 +332,40 @@ li .duration {
 .filters-container .filter-option {
   position: relative;
   border-radius: 4px;
-  padding: 5px 7px;
+  padding: 7px;
   background-color: #323232;
 }
 .filters-container .filter-option:has(.checkbox:checked) {
   box-shadow: rgba(10, 10, 10, 0.4) 0 0 12px;
+}
+.filters-container .filter-option .filter-icons {
+  display: flex;
+  justify-content: space-between;
+}
+.filters-container .filter-option .filter-icons i {
+  font-size: 20px;
+  padding: 2px 2px 0 0;
+  color: #646464;
+  z-index: 1;
+  cursor: pointer;
+}
+.filters-container .filter-option .filter-icons i:hover {
+  color: #8c8c8c;
+}
+.filters-container .filter-option .filter-icons i:active ~ .tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+.filters-container .filter-option .filter-icons .tooltip {
+  opacity: 0;
+  margin-left: -5px;
+  width: 100%;
+  bottom: 0;
+  cursor: default;
+}
+.filters-container .filter-option .filter-icons .tooltip:hover {
+  opacity: 1;
+  visibility: visible;
 }
 .filters-container .filter-option #popularity-toggle {
   width: 30px;
@@ -339,24 +376,27 @@ li .duration {
   overflow: hidden;
   margin: 0 auto;
   text-align: center;
+  padding-top: 7px;
+  font-size: 18px;
 }
 .filters-container .filter-option .slider-container {
   height: 40px;
   display: grid;
-  place-items: center;
-  padding: 5px 0;
+  grid-template-columns: 4fr 1fr;
+  gap: 10px;
+  justify-items: center;
+  align-items: center;
+  padding: 0 5px;
 }
 .filters-container .filter-option .slider-container .slider {
-  background: linear-gradient(to right, #4aacf5, 0%, #4aacf5, 50%, #4B4B4B 50%, #4B4B4B 100%);
+  background: linear-gradient(to right, #4AACF5, 0%, #4AACF5, 50%, #4B4B4B 50%, #4B4B4B 100%);
   border-radius: 8px;
   height: 10px;
+  width: 100%;
   outline: none;
   transition: background 450ms ease-in;
   appearance: none;
   -webkit-appearance: none;
-}
-.filters-container .filter-option .slider-container #mode-slider {
-  background: linear-gradient(to right, #4aacf5, 0%, #4aacf5, 100%, #4b4b4b 100%, #4b4b4b 100%);
 }
 .filters-container .filter-option .slider-container .slider::-webkit-slider-thumb {
   width: 20px;
@@ -366,6 +406,19 @@ li .duration {
   -webkit-appearance: none;
   cursor: ew-resize;
   background: #B3B3B3;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+}
+.filters-container .filter-option .slider-container #mode-slider {
+  background: linear-gradient(to right, #4AACF5, 0%, #4AACF5, 100%, #4B4B4B 100%, #4B4B4B 100%);
+}
+.filters-container .filter-option .slider-container .slider-value {
+  padding: 2px 5px;
+  border-radius: 4px;
+  min-width: 32px;
+  max-width: 41px;
+  text-align: center;
+  color: white;
+  box-shadow: inset rgba(0, 0, 0, 0.5) 0 0 10px;
 }
 .filters-container .filter-option .toggle-container .checkbox {
   display: none;
@@ -437,14 +490,13 @@ li .duration {
   font-size: 14px;
   width: fit-content;
   max-width: calc(100vw - 50px);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
   margin-top: -34px;
+  color: white;
   background-color: #3c3c3c;
   box-shadow: rgba(0, 0, 0, 0.5) 0 2px 10px;
   padding: 7px 10px;
   border-radius: 3px;
+  z-index: 4;
 }
 
 @media only screen and (max-width: 450px) {
