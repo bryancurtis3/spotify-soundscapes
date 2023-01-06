@@ -7,7 +7,8 @@ Users are able to visualize their data such as:
 * Top Genres
 * Top Artists
 * Top Songs
-* Various Musical Attributes (ex. Danceability)
+* Top Recommendations
+* Taste Ratings (ex. Danceability, Positivity, etc.)
 
 ## Author
-This web app was created by Bryan Curtis as a passion project. 
+This web app was created by Bryan Curtis. 

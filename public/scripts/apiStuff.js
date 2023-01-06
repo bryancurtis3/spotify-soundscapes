@@ -788,11 +788,11 @@ if (access_token && !error) {
                 if (rating > 0) {
                     ctx.beginPath();
                     ctx.arc(150, 150, 130, percent, 0, true);
-                    ctx.strokeStyle = 'rgb(74, 172, 245)';
+                    ctx.strokeStyle = '#3A80F7';
                     // ctx.shadowOffsetX = 0;
                     // ctx.shadowOffsetY = 0;
                     // ctx.shadowBlur = 10;
-                    // ctx.shadowColor = 'rgb(74, 172, 245)';
+                    // ctx.shadowColor = '#3A80F7';
                     ctx.lineWidth = 25;
                     ctx.stroke();
                 }
@@ -836,6 +836,11 @@ if (access_token && !error) {
             for (filter in filters) {
                 if ($(`#${filter}-check`).is(':checked')) {
                     urlFilter += `&target_${filter}=${filters[filter]}`
+
+                    // Fixing mode appearance to match others
+                    if (filter == 'mode') {
+
+                    }
                 }
             }
             console.log(urlFilter);
@@ -899,10 +904,23 @@ if (access_token && !error) {
 
     // NOTE Feature testing in progress below
     const adjustSlider = function adjustSlider(event) {
-        let value = this.value;
-        let displayValue = $(this).val();
+        let element;
+        let value;
+        let displayValue;
 
-        if (event.data) {
+        // Allows the function to handle calls directly from the slider as well as inderectly from the input box while still adjusting the slider appropriately
+        if (!event.bubbles) {
+            element = Object.values(event)[0];
+            value = +event.context.value;
+            displayValue = value;
+        } else {
+            element = this;
+            value = this.value;
+            displayValue = $(this).val();
+        }
+
+
+        if (event.bubbles && event.data) {
             min = event.data.min;
             max = event.data.max;
             range = max - min;
@@ -910,28 +928,41 @@ if (access_token && !error) {
             value = Math.round((value - min) * (100 / range));
         }
 
-        // Renders gradient for cuurent value
-        this.style.background = `linear-gradient(to right, rgb(74, 172, 245), 0%, rgb(74, 172, 245), ${value}%, #4B4B4B ${value}%, #4B4B4B 100%)`;
-
         // Fixes valence and energy since they are passed as decimals
-        if (event.target.id.includes('valence') || event.target.id.includes('energy')) {
-            displayValue = Math.round(displayValue * 100);
+        if (element.id.includes('valence') || element.id.includes('energy')) {
+            value = Math.round(value * 100);
+            displayValue = Math.round(value);
         }
         
-        // Sets the value indictor
-        $(event.target).siblings().text(displayValue);
+        // Renders gradient for current value
+        element.style.background = `linear-gradient(to right, #3A80F7, 0%, #3A80F7, ${value}%, #4B4B4B ${value}%, #4B4B4B 100%)`;
 
+        // Sets the value indictor
+        $(element).siblings('.slider-value').val(displayValue);
+
+        // FIXME i dont think i need this anymore??
         // Hard reset fix for mode
-        if (event.target.id.includes('mode') && displayValue === 100) $(event.target).siblings().text('1');
+        // if (event.target.id.includes('mode') && displayValue === 100) $(event.target).siblings().text('1');
     }
     
-
-    $('#danceability-slider').on('input', adjustSlider);
-    $('#mode-slider').on('input', {min: 0, max: 1}, adjustSlider);
+    // Changes the slider when the user is moving the slider
     $('#popularity-slider').on('input', adjustSlider);
-    $('#valence-slider').on('input', {min: 0, max: 1},adjustSlider);
-    $('#tempo-slider').on('input', {min: 40, max: 200},adjustSlider);
-    $('#energy-slider').on('input', {min: 0, max: 1},adjustSlider);
+    $('#danceability-slider').on('input', adjustSlider);
+    $('#valence-slider').on('input', adjustSlider);
+    $('#tempo-slider').on('input', {min: 40, max: 200}, adjustSlider);
+    $('#energy-slider').on('input', adjustSlider);
+    $('#mode-slider').on('input', {min: 0, max: 1}, adjustSlider);
+
+    // Handles user input via text input box and the resulting slider adjustment interactions
+    $('.slider-value').on('input', (function() {
+        if ($(this).val() < 0) $(this).val(0);
+        if ($(this).val() > 100) $(this).val(100);
+        
+        $(this).siblings('.slider').val($(this).val());
+
+        let slider = $(this).siblings('.slider');
+        $(this).on('input', adjustSlider(slider));
+    }));
 
 
 
@@ -945,7 +976,7 @@ if (access_token && !error) {
 
 
 } else {
-    // TODO this is deprecated and now Idk what this if statement even does
+    // FIXME this is deprecated and now Idk what this if statement even does
     $('#login-page').show();
     $('#home-page').hide(); // TODO this does nothing atm
 };

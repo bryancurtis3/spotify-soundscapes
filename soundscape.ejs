@@ -244,10 +244,29 @@
             <button id="rec-refresh">Refresh</button>
         </section>
 
-        <h4 class="filter-title">Advanced Recommendation Filters</h4>
+        <h4 class="filter-title">Recommendation Filters</h4>
 
         <!-- Filters are created without EJS functionality due to the abundance of specific requirements in sliders -->
         <form class="filters-container">
+            
+            <div class="filter-option">
+                <div class="slider-title-container">
+                    <p class="slider-title">Popularity</p>
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span class="tooltip">
+                        Popularity is calculated by algorithm and is based, in the most part, on the total number of plays the track has had and how recent those plays are.
+                    </span>
+                </div>
+                <div class="slider-container">
+                    <div class="toggle-container">
+                        <input type="checkbox" class="checkbox" id="popularity-check">
+                        <label for="popularity-check"></label>
+                        <div class="unselected"></div>
+                    </div>
+                    <input type="range" class="slider" id="popularity-slider">
+                    <input type="number" class="slider-value" value="50"></input>
+                </div>
+            </div>
 
             <div class="filter-option">
                 <div class="slider-title-container">
@@ -264,7 +283,64 @@
                         <div class="unselected"></div>
                     </div>
                     <input type="range" class="slider" id="danceability-slider">
-                    <span class="slider-value">50</span>
+                    <input type="number" class="slider-value" value="50"></input>
+                </div>
+            </div>
+
+            <div class="filter-option">
+                <div class="slider-title-container">
+                    <p class="slider-title">Valence</p>
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span class="tooltip">
+                        Valence describes the musical positiveness conveyed by a track. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry).
+                    </span>
+                </div>
+                <div class="slider-container">
+                    <div class="toggle-container">
+                        <input type="checkbox" class="checkbox" id="valence-check">
+                        <label for="valence-check"></label>
+                        <div class="unselected"></div>
+                    </div>
+                    <input type="range" min="0" max="1" step=".01" class="slider" id="valence-slider">
+                    <input type="number" class="slider-value" value="50"></input>
+                </div>
+            </div>
+
+            <div class="filter-option">
+                <div class="slider-title-container">
+                    <p class="slider-title">Tempo</p>
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span class="tooltip">
+                        The overall estimated tempo of a track in beats per minute (BPM). In musical terminology, tempo is the speed or pace of a given piece and derives directly from the average beat duration.
+                    </span>
+                </div>
+                <div class="slider-container">
+                    <div class="toggle-container">
+                        <input type="checkbox" class="checkbox" id="tempo-check">
+                        <label for="tempo-check"></label>
+                        <div class="unselected"></div>
+                    </div>
+                    <input type="range" min="40" max="200" class="slider" id="tempo-slider">
+                    <input type="number" class="slider-value" value="120"></input>
+                </div>
+            </div>
+
+            <div class="filter-option">
+                <div class="slider-title-container">
+                    <p class="slider-title">Energy</p>
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span class="tooltip">
+                        Energy represents intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. Perceptual features contributing to this attribute include dynamic range, perceived loudness, timbre, onset rate, and general entropy.
+                    </span>
+                </div>
+                <div class="slider-container">
+                    <div class="toggle-container">
+                        <input type="checkbox" class="checkbox" id="energy-check">
+                        <label for="energy-check"></label>
+                        <div class="unselected"></div>
+                    </div>
+                    <input type="range" min="0" max="1" step=".01" class="slider" id="energy-slider">
+                    <input type="number" class="slider-value" value="50"></input>
                 </div>
             </div>
 
@@ -284,82 +360,6 @@
                     </div>
                     <input type="range" min="0" max="1" class="slider" id="mode-slider">
                     <span class="slider-value">1</span>
-                </div>
-            </div>
-
-            <div class="filter-option">
-                <div class="slider-title-container">
-                    <p class="slider-title">Popularity</p>
-                    <i class="fa-solid fa-circle-info"></i>
-                    <span class="tooltip">
-                        Popularity is calculated by algorithm and is based, in the most part, on the total number of plays the track has had and how recent those plays are.
-                    </span>
-                </div>
-                <div class="slider-container">
-                    <div class="toggle-container">
-                        <input type="checkbox" class="checkbox" id="popularity-check">
-                        <label for="popularity-check"></label>
-                        <div class="unselected"></div>
-                    </div>
-                    <input type="range" class="slider" id="popularity-slider">
-                    <span class="slider-value">50</span>
-                </div>
-            </div>
-
-            <div class="filter-option">
-                <div class="slider-title-container">
-                    <p class="slider-title">Valence</p>
-                    <i class="fa-solid fa-circle-info"></i>
-                    <span class="tooltip">
-                        Valence describes the musical positiveness conveyed by a track. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry).
-                    </span>
-                </div>
-                <div class="slider-container">
-                    <div class="toggle-container">
-                        <input type="checkbox" class="checkbox" id="valence-check">
-                        <label for="valence-check"></label>
-                        <div class="unselected"></div>
-                    </div>
-                    <input type="range" min="0" max="1" step=".01" class="slider" id="valence-slider">
-                    <span class="slider-value">50</span>
-                </div>
-            </div>
-
-            <div class="filter-option">
-                <div class="slider-title-container">
-                    <p class="slider-title">Tempo (BPM)</p>
-                    <i class="fa-solid fa-circle-info"></i>
-                    <span class="tooltip">
-                        The overall estimated tempo of a track in beats per minute (BPM). In musical terminology, tempo is the speed or pace of a given piece and derives directly from the average beat duration.
-                    </span>
-                </div>
-                <div class="slider-container">
-                    <div class="toggle-container">
-                        <input type="checkbox" class="checkbox" id="tempo-check">
-                        <label for="tempo-check"></label>
-                        <div class="unselected"></div>
-                    </div>
-                    <input type="range" min="40" max="200" class="slider" id="tempo-slider">
-                    <span class="slider-value">120</span>
-                </div>
-            </div>
-
-            <div class="filter-option">
-                <div class="slider-title-container">
-                    <p class="slider-title">Energy</p>
-                    <i class="fa-solid fa-circle-info"></i>
-                    <span class="tooltip">
-                        Energy represents intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. Perceptual features contributing to this attribute include dynamic range, perceived loudness, timbre, onset rate, and general entropy.
-                    </span>
-                </div>
-                <div class="slider-container">
-                    <div class="toggle-container">
-                        <input type="checkbox" class="checkbox" id="energy-check">
-                        <label for="energy-check"></label>
-                        <div class="unselected"></div>
-                    </div>
-                    <input type="range" min="0" max="1" step=".01" class="slider" id="energy-slider">
-                    <span class="slider-value">50</span>
                 </div>
             </div>
         </form>

@@ -16,7 +16,7 @@ main {
   justify-items: center;
   height: 100%;
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
   padding: 20px;
   margin: 0 auto;
   color: white;
@@ -338,9 +338,6 @@ li .duration {
 .filters-container .filter-option:has(.checkbox:checked) {
   box-shadow: rgba(10, 10, 10, 0.4) 0 0 12px;
 }
-.filters-container .filter-option #popularity-toggle {
-  width: 30px;
-}
 .filters-container .filter-option .slider-title-container {
   display: flex;
   align-items: center;
@@ -357,7 +354,7 @@ li .duration {
   padding-left: 30px;
 }
 .filters-container .filter-option .slider-title-container i {
-  font-size: 20px;
+  font-size: 18px;
   padding-left: 10px;
   color: #646464;
   z-index: 1;
@@ -381,9 +378,9 @@ li .duration {
   visibility: visible;
 }
 .filters-container .filter-option .slider-container {
-  height: 40px;
+  height: 35px;
   display: grid;
-  grid-template-columns: 50px 5fr 42px;
+  grid-template-columns: 46px 1fr 46px;
   gap: 10px;
   justify-items: center;
   align-items: center;
@@ -405,7 +402,7 @@ li .duration {
   display: block;
   transition: 0.2s ease;
   height: 24px;
-  width: 42px;
+  width: 44px;
   border-radius: 60px;
   user-select: none;
   cursor: pointer;
@@ -427,7 +424,7 @@ li .duration {
   border-radius: 30px;
 }
 .filters-container .filter-option .slider-container .toggle-container label::after {
-  width: 21px;
+  width: 22px;
   background-color: #f0f0f0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   border-radius: 100%;
@@ -439,9 +436,9 @@ li .duration {
   margin-left: 20px;
 }
 .filters-container .filter-option .slider-container .slider {
-  background: linear-gradient(to right, #4AACF5, 0%, #4AACF5, 50%, #4B4B4B 50%, #4B4B4B 100%);
+  background: linear-gradient(to right, #3A80F7, 0%, #3A80F7, 50%, #4B4B4B 50%, #4B4B4B 100%);
   border-radius: 8px;
-  height: 10px;
+  height: 4px;
   width: 100%;
   outline: none;
   transition: background 450ms ease-in;
@@ -456,19 +453,31 @@ li .duration {
   -webkit-appearance: none;
   cursor: ew-resize;
   background: #B3B3B3;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
 }
 .filters-container .filter-option .slider-container #mode-slider {
-  background: linear-gradient(to right, #4AACF5, 0%, #4AACF5, 100%, #4B4B4B 100%, #4B4B4B 100%);
+  background: linear-gradient(to right, #3A80F7, 0%, #3A80F7, 100%, #4B4B4B 100%, #4B4B4B 100%);
 }
 .filters-container .filter-option .slider-container .slider-value {
-  padding: 2px 5px;
-  border-radius: 4px;
+  height: 23px;
+  width: 43px;
+  border-style: none;
+  border-radius: 30px;
   min-width: 32px;
   max-width: 41px;
+  font-size: 16px;
   text-align: center;
   color: white;
-  box-shadow: inset rgba(0, 0, 0, 0.5) 0 0 10px;
+  background-color: #505050;
+  box-shadow: rgba(0, 0, 0, 0.3) 0 0 8px;
+}
+.filters-container .filter-option .slider-container .slider-value:focus {
+  outline: none;
+}
+.filters-container .filter-option .slider-container .slider-value::-webkit-inner-spin-button, .filters-container .filter-option .slider-container .slider-value::-webkit-outer-spin-button {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
 }
 .filters-container .filter-option .unselected {
   position: absolute;
@@ -535,11 +544,6 @@ li .duration {
 
   .li-popularity {
     display: none !important;
-  }
-}
-@media only screen and (min-width: 750px) {
-  .filters-container {
-    width: 734px;
   }
 }
 #button {

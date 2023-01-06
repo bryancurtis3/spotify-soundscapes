@@ -6,7 +6,8 @@ $other: #747474;
 $testing: #838383;
 $light-text: #B3B3B3;
 $dark-75: #4B4B4B;
-$progress: #4AACF5;
+// $progress: #4AACF5; // TODO decide about the progress color
+$progress: #3A80F7;
 
 
 * {
@@ -26,7 +27,7 @@ main {
     justify-items: center;
     height: 100%;
     width: 100%;
-    max-width: 800px;
+    max-width: 900px;
     padding: 20px;
     margin: 0 auto;
     color: white;
@@ -404,12 +405,9 @@ li {
         padding: 7px;
         background-color: rgb(50, 50, 50);
 
+        // Filter option shadow while enabled
         &:has(.checkbox:checked) {
             box-shadow: rgba(10, 10, 10, .4) 0 0 12px;
-        }
-
-        #popularity-toggle {
-            width: 30px;
         }
 
         .slider-title-container {
@@ -429,7 +427,7 @@ li {
             }
     
             i {
-                font-size: 20px;
+                font-size: 18px;
                 padding-left: 10px;
                 color: rgb(100, 100, 100);
                 z-index: 1;
@@ -463,9 +461,9 @@ li {
 
 
         .slider-container {
-            height: 40px;
+            height: 35px;
             display: grid;
-            grid-template-columns: 50px 5fr 42px;
+            grid-template-columns: 46px 1fr 46px;
             gap: 10px;
             justify-items: center;
             align-items: center;
@@ -489,7 +487,7 @@ li {
                     display: block;
                     transition: .2s ease;
                     height: 24px;
-                    width: 42px;
+                    width: 44px;
                     border-radius: 60px;
                     user-select: none;
                     cursor: pointer;
@@ -514,7 +512,7 @@ li {
                     }
     
                     &::after {
-                        width: 21px;
+                        width: 22px;
                         background-color: rgb(240, 240, 240);
                         box-shadow: 0 2px 5px rgba(0, 0, 0, .3);
                         border-radius: 100%;
@@ -539,7 +537,7 @@ li {
                 background: linear-gradient(to right, $progress, 0%, 
                 $progress, 50%, $dark-75 50%, $dark-75 100%);
                 border-radius: 8px;
-                height: 10px;
+                height: 4px;
                 width: 100%;
                 outline: none;
                 transition: background 450ms ease-in;
@@ -554,7 +552,7 @@ li {
                     -webkit-appearance: none;
                     cursor: ew-resize;
                     background: #B3B3B3;
-                    box-shadow: 0 0 6px rgba(0, 0, 0, .3);
+                    box-shadow: 0 3px 6px rgba(0, 0, 0, .3);
                 }
             }
 
@@ -565,14 +563,29 @@ li {
 
             .slider-value {
                 // padding-left: 10px;
-                padding: 2px 5px;
+                // padding: 2px 5px;
                 // border: 2px solid $progress;
-                border-radius: 4px;
+                height: 23px;
+                width: 43px;
+                border-style: none;
+                border-radius: 30px;
                 min-width: 32px;
                 max-width: 41px;
+                font-size: 16px;
                 text-align: center;
                 color: white;
-                box-shadow: inset rgba(0, 0, 0, .5) 0 0 10px;
+                background-color: rgb(80, 80, 80);
+                box-shadow: rgba(0, 0, 0, .3) 0 0 8px;
+
+                &:focus {
+                    outline: none;
+                }
+
+                &::-webkit-inner-spin-button, &::-webkit-outer-spin-button {
+                    appearance: none;
+                    -webkit-appearance: none;
+                    margin: 0;
+                }
             }
         }
 
@@ -653,7 +666,7 @@ li {
 
 @media only screen and (min-width: 750px) {
     .filters-container {
-        width: 734px; // Fixes filters grid auto wrapping to 4 & 2 by limmiting width barely below the natural max (still looks good/nomral
+        // width: 734px; // Fixes filters grid auto wrapping to 4 & 2 by limmiting width barely below the natural max (still looks good/nomral)
     }
 }
 
