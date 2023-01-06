@@ -919,7 +919,7 @@ if (access_token && !error) {
             displayValue = $(this).val();
         }
 
-        // FIXME unfished needs to be tested with mode and retested with tempo
+        // Tempo custom range fix
         if (element.id.includes('tempo')) {
             range = 200 - 40;
             value = Math.round((value - 40) * (100 / range));
@@ -949,9 +949,9 @@ if (access_token && !error) {
     $('.slider-value').on('input', (function() {
         let slider = $(this).siblings('.slider');
 
-        // FIXME needs to be tested with internet
         if (Object.values(slider)[0].id.includes('tempo')) {
-
+            if ($(this).val() < 0) $(this).val(0);
+            if ($(this).val() > 200) $(this).val(200);
         } else if (Object.values(slider)[0].id.includes('mode')) {
             if ($(this).val() < 0) $(this).val(0);
             if ($(this).val() > 1) $(this).val(1);
@@ -960,11 +960,19 @@ if (access_token && !error) {
             if ($(this).val() > 100) $(this).val(100);
         }
 
-        // FIXME I weanna test replacing this with slider.val() to see if that works
-        $(this).siblings('.slider').val($(this).val());
+        // $(this).siblings('.slider').val($(this).val()); // TODO deprecated, remove if it works later
+        slider.val($(this).val());
         
         $(this).on('input', adjustSlider(slider));
     }));
+
+    // This exists only to allow users to properly input values for tempo, might be ineffecient (but barely at this limited scale)
+    $('.slider-value').change(function() {
+        if (Object.values($(this).siblings('.slider'))[0].id.includes('tempo')) {
+            if ($(this).val() < 40) $(this).val(40);
+            if ($(this).val() > 200) $(this).val(200);
+        }
+    })
 
 
 
