@@ -827,9 +827,9 @@ if (access_token && !error) {
                 danceability: $('#danceability-slider').val(),
                 mode: $('#mode-slider').val(),
                 popularity: $('#popularity-slider').val(),
-                valence: $('#valence-slider').val(),
+                valence: $('#valence-slider').val() / 100,
                 tempo: $('#tempo-slider').val(),
-                energy: $('#energy-slider').val()
+                energy: $('#energy-slider').val() / 100
             };
             
             let urlFilter = '';
@@ -919,30 +919,22 @@ if (access_token && !error) {
             displayValue = $(this).val();
         }
 
-
-        if (event.bubbles && event.data) {
-            min = event.data.min;
-            max = event.data.max;
-            range = max - min;
-
-            value = Math.round((value - min) * (100 / range));
+        // FIXME unfished needs to be tested with mode and retested with tempo
+        if (element.id.includes('tempo')) {
+            range = 200 - 40;
+            value = Math.round((value - 40) * (100 / range));
         }
 
-        // Fixes valence and energy since they are passed as decimals
-        if (element.id.includes('valence') || element.id.includes('energy')) {
-            value = Math.round(value * 100);
-            displayValue = Math.round(value);
-        }
+        // Mode binary fix
+        if (element.id.includes('mode')) value = Math.round(value * 100);
         
         // Renders gradient for current value
         element.style.background = `linear-gradient(to right, #3A80F7, 0%, #3A80F7, ${value}%, #4B4B4B ${value}%, #4B4B4B 100%)`;
 
         // Sets the value indictor
         $(element).siblings('.slider-value').val(displayValue);
-
-        // FIXME i dont think i need this anymore??
-        // Hard reset fix for mode
-        // if (event.target.id.includes('mode') && displayValue === 100) $(event.target).siblings().text('1');
+        // Sets the slider value (fixes backspace resulting in starting value at 0, might be circular / broken)
+        $(element).val(displayValue);
     }
     
     // Changes the slider when the user is moving the slider
@@ -955,12 +947,22 @@ if (access_token && !error) {
 
     // Handles user input via text input box and the resulting slider adjustment interactions
     $('.slider-value').on('input', (function() {
-        if ($(this).val() < 0) $(this).val(0);
-        if ($(this).val() > 100) $(this).val(100);
-        
-        $(this).siblings('.slider').val($(this).val());
-
         let slider = $(this).siblings('.slider');
+
+        // FIXME needs to be tested with internet
+        if (Object.values(slider)[0].id.includes('tempo')) {
+
+        } else if (Object.values(slider)[0].id.includes('mode')) {
+            if ($(this).val() < 0) $(this).val(0);
+            if ($(this).val() > 1) $(this).val(1);
+        } else {
+            if ($(this).val() < 0) $(this).val(0);
+            if ($(this).val() > 100) $(this).val(100);
+        }
+
+        // FIXME I weanna test replacing this with slider.val() to see if that works
+        $(this).siblings('.slider').val($(this).val());
+        
         $(this).on('input', adjustSlider(slider));
     }));
 
