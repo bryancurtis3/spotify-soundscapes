@@ -85,6 +85,7 @@ if (access_token && !error) {
     let followingIds = '';
     let seedTracks = '';
     let audioFeatures = {};
+    let userSeeds = '';
 
     // Ajax calls built into functions to be fed to .when() functions
     const callArtists = function callArtists() {
@@ -126,6 +127,8 @@ if (access_token && !error) {
      * @returns {object} An object of [seeds] and [tracks] where tracks is the recommendations from Spotify
      */
     const callRecs = function callRecs(seeds, filters) {
+        if (userSeeds != '') seeds = userSeeds;
+
         return $.ajax({
             url: `https://api.spotify.com/v1/recommendations?seed_tracks=${seeds}&limit=5${filters}`,
             headers: {
@@ -141,9 +144,25 @@ if (access_token && !error) {
         });
     }
 
+    const callSearch = function callSearch(keywords) {
+        return $.ajax({
+            url: `https://api.spotify.com/v1/search?q=${keywords}&type=track`,
+            headers: {
+            'Authorization': 'Bearer ' + access_token
+            },
+            success: function(response) {
+                // console.log(response);
+            },
+            error: function(error) {
+                console.log(`Error: ${error.responseJSON.error.message}`);
+                window.location.replace(window.location.origin);   
+            }
+        });
+    }
+
 
     $.when(callArtists(), callSongs()).done(function(genreRes, songRes){
-
+        
         /**
          * The array of the raw top artist data from Spotify
          */
@@ -391,13 +410,13 @@ if (access_token && !error) {
             if (barSortIterator >= 15) break;
             artistSongs[artist] ? barData[artist] = artistSongs[artist] : barData[artist] = [];
             barSortIterator++;
-        }
+        };
         // console.log(barData);
 
         let songCounts = {};
         for (artist in barData) {
             songCounts[artist] = barData[artist].length;
-        }
+        };
         // console.log(songCounts);
 
 
@@ -421,7 +440,7 @@ if (access_token && !error) {
             return labelSongs;
         };
 
-
+        // ============ END GRAPH STUFF ============
 
         // const artistSongsChart = function artistSongsChart() {
         //     const ctx = document.getElementById('artistSongsChart').getContext('2d');
@@ -816,6 +835,113 @@ if (access_token && !error) {
             console.log(features);
         });
 
+        // ========= TESTING TRACK SEARCH =========
+        ////////////////
+        $('#track-search').on('input', function(key) {
+
+            console.log('hello out there')
+            
+            // Hides results and 'x' when 'x' is clicked, code is here to make it feel more responsive as opposed to in 
+            if ($("#track-search").val().length == 0) {
+                $('.search-results').css("display", "none");
+                $('.fa-x').css("display", "none");
+            } else if ($("#track-search").val().length == 1) {
+                $('.fa-x').css("display", "block");
+            }
+            
+            clearTimeout($.data(this, 'timer'));
+            if (key.keyCode == 13) {
+                search(true);
+            } else {
+                $(this).data('timer', setTimeout(search, 500));
+            }
+        });
+
+        // Handles custom 'x' clearing search bar and results
+        $('.fa-x').on('click', function() {
+            $('#track-search').val('');
+            $('.search-results').css("display", "none");
+            $('.fa-x').css("display", "none");
+        });
+
+        const search = function search(enter) {
+            const keywords = $("#track-search").val();
+
+            if (!enter && keywords.length < 3) return; //wasn't enter, not > 3 char
+
+            $.when(callSearch(keywords)).done(function (searchResults) {
+                const searchData = searchResults.tracks.items;
+                // console.log(searchData);
+                
+                refreshSearch(searchData);
+
+                $('.search-results').css("display", "block");
+            });
+        };
+
+        ///////////////
+
+        // const submitSearch = function submitSearch() {
+        //     const keywords = $('#track-search').val();
+        //     console.log(keywords)
+
+        //     $.when(callSearch(keywords)).done(function (searchResults) {
+        //         const searchData = searchResults.tracks.items;
+        //         console.log(searchData);
+                
+        //         refreshSearch(searchData);
+
+        //         $('.search-results').css("display", "block")
+        //     });
+        // };
+
+        /**
+         * Adds new seed ID to the list of up to 5 IDs
+         * @param {array} event jQuery event variable holds the seed, specified in click function of element
+         */
+        const addSeed = function addSeed(event) {
+            let seed = event.data.seed;
+            userSeeds += seed + ',';
+        };
+
+        /**
+         * Handles updating of search UI with new data after submitSearch runs
+         * @param {array} searchData The array of tracks returned after the API call
+         */
+        const refreshSearch = function refreshSearch(searchData) {
+            console.log(searchData)
+            for (i = 0; i < 5; i++) {
+                const trackResult = searchData[i];
+                console.log(trackResult)
+
+                if (searchData.length > i) {
+                    // Unbinding here prevents click events stacking on elements when refreshed
+                    $(`#res-li-${i}`).unbind();
+                    $(`#res-play-${i}`).unbind();
+
+                    $(`#res-li-${i}`).dblclick({uri: trackResult.uri, uriType: "song"}, playSpotify);
+                    $(`#res-play-${i}`).click({uri: trackResult.uri, uriType: "song"}, playSpotify);
+
+                    $(`#res-image-${i}`).attr('src', trackResult.album.images[2].url);
+                    $(`#res-name-${i}`).text(trackResult.name)
+                        .attr('href', trackResult.uri);
+
+                    $(`#res-artist-${i}`).text(trackResult.artists[0].name)
+                        .attr('href', trackResult.artists[0].uri);
+                    $(`#res-play-tip-${i}`).text(`Play ${trackResult.name} on Spotify`);
+
+                    $(`#add-seed-${i}`).click({seed: trackResult.id}, addSeed);
+
+                } else {
+                    $(`#res-li-${i}`).attr('class', 'no-data');
+                }
+            }
+        };
+
+        // $('#submit-search').click(submitSearch);
+
+        
+
 
         /**
          * Compiles user specified filters into query params and then passes them to Spotify API to get filter recommendations, runs on user click
@@ -831,6 +957,11 @@ if (access_token && !error) {
                 tempo: $('#tempo-slider').val(),
                 energy: $('#energy-slider').val() / 100
             };
+
+            // Working on allowing user submitted seed data for Recs
+            // const userSeeds = $('#user-seeds').val();
+            // #FIXME this is unfished and being used for testing. NOT PRODUCTION READY
+            // if (userSeeds) seedTracks = userSeeds; // Overwrites seedTracks from user data with custom, user input list of seed track IDs.
             
             let urlFilter = '';
             for (filter in filters) {
@@ -843,7 +974,7 @@ if (access_token && !error) {
                     }
                 }
             }
-            console.log(urlFilter);
+            // console.log(urlFilter);
 
             $.when(callRecs(seedTracks, urlFilter)).done(function (recs) {
                 const recsData = recs.tracks;
@@ -851,7 +982,7 @@ if (access_token && !error) {
                 
                 refreshRecs(recsData);
             });
-        }
+        };
 
         /**
          * Handles updating of UI with new data after submitRecs runs
@@ -862,7 +993,7 @@ if (access_token && !error) {
                 const songRec = recsData[i];
 
                 if (recsData.length > i) {
-                    // Unbinds added to prevent click events stacking on elements on refresh
+                    // Unbinding here prevents click events stacking on elements when refreshed
                     $(`#rec-li-${i}`).unbind();
                     $(`#rec-play-${i}`).unbind();
 
@@ -886,7 +1017,7 @@ if (access_token && !error) {
                     $(`#rec-li-${i}`).attr('class', 'no-data');
                 }
             }
-        }
+        };
 
 
         $('#rec-refresh').click(submitRecs);
@@ -935,7 +1066,7 @@ if (access_token && !error) {
         $(element).siblings('.slider-value').val(displayValue);
         // Sets the slider value (fixes backspace resulting in starting value at 0, might be circular / broken)
         $(element).val(displayValue);
-    }
+    };
     
     // Changes the slider when the user is moving the slider
     $('#popularity-slider').on('input', adjustSlider);
@@ -983,7 +1114,12 @@ if (access_token && !error) {
         $('.checkbox:not(:checked)').siblings('.unselected').css('display','block');
     });
 
+    $('#swap').on('click', function() {
+        const url = window.location.href
+        .replace('soundscape', 'search');
 
+        location.href = url;
+    });
 
 } else {
     // FIXME this is deprecated and now Idk what this if statement even does

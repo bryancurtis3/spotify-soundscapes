@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+
+    <meta name="description" content="A customizable way to search for songs of certain styles with specific attributes using Spoitfy's recommendation engine.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="https://i.imgur.com/mp8KZ7W.png">
+
+    <!-- === Styles === -->
+    <link rel="stylesheet" href="../styles/soundscape.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+
+    <!-- === Scripts === -->
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <!-- Spotify API Logic -->
+    <script src="../scripts/searchApi.js" defer></script>
+</head>
+<body>
+    <main>
+        <button id="swap">Soundscapes</button>
+
+        <section class="user-seeds">
+            <h5 class="custom-seeds-title">Custom Seeds</h5>
+            <% for (let i = 0; i < 5; i++) { %>
+                <li id="seed-li-<%= i %>">
+                    <a 
+                        class="fa-solid fa-play num-play" 
+                        id="seed-play-<%= i %>" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        title="Play Song on Spotify">
+                        <span class="tooltip" id="seed-play-tip-<%= i %>"></span>
+                    </a>
+                    <img class="li-image" id="seed-image-<%= i %>">
+                    <p class="li-text search-li">
+                        <a 
+                            class="li-name" 
+                            id="seed-name-<%= i %>" 
+                            title="Go to Song & Lyrics on Spotify"
+                            target="_blank" 
+                            rel="noopener noreferrer">
+                        </a>
+                        <a 
+                            class="list-subtext" 
+                            id="seed-artist-<%= i %>" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            title="Go to Artist on Spotify">
+                        </a>
+                    </p>
+                    <i class="fa-x fa-solid remove-seed" id="remove-seed-<%= i %>">
+                        <span class="tooltip">Add to Seed Tracks</span>
+                    </i>
+                </li>
+            <% } %> 
+        </section>
+
+        <!-- Testing track search -->
+        <section class="search">
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="search" id="track-search" placeholder="Search for a song to add to your seeds">
+                <i class="fa-solid fa-x"></i>
+            </div>
+    
+            <ul class="search-results">
+                <% for (let i = 0; i < 5; i++) { %>
+                    <li id="res-li-<%= i %>">
+                        <a 
+                            class="fa-solid fa-play num-play" 
+                            id="res-play-<%= i %>" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            title="Play Song on Spotify">
+                            <span class="tooltip" id="res-play-tip-<%= i %>"></span>
+                        </a>
+                        <img class="li-image" id="res-image-<%= i %>">
+                        <p class="li-text search-li">
+                            <a 
+                                class="li-name" 
+                                id="res-name-<%= i %>" 
+                                title="Go to Song & Lyrics on Spotify"
+                                target="_blank" 
+                                rel="noopener noreferrer">
+                            </a>
+                            <a 
+                                class="list-subtext" 
+                                id="res-artist-<%= i %>" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                title="Go to Artist on Spotify">
+                            </a>
+                        </p>
+                        <i class="fa-solid fa-plus add-to-seeds" id="add-seed-<%= i %>">
+                            <span class="tooltip">Add to Seed Tracks</span>
+                        </i>
+                    </li>
+                <% } %> 
+            </ul>
+        </section>
+
+        <section class="recs-container">
+            <h4>Your Recommendations</h4>
+
+            <ul>
+                <% for (let i = 0; i < 10; i++) { %>
+                    <li id="rec-li-<%= i %>">
+                        <a 
+                            class="fa-solid fa-play num-play" 
+                            id="rec-play-<%= i %>" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            title="Play Song on Spotify">
+                            <span class="tooltip" id="rec-play-tip-<%= i %>"></span>
+                        </a>
+                        <span class="li-number"><%= i + 1 %></span>
+                        <img class="li-image" id="rec-image-<%= i %>">
+                        <p class="li-text">
+                            <a 
+                                class="li-name" 
+                                id="rec-name-<%= i %>" 
+                                title="Go to Song & Lyrics on Spotify"
+                                target="_blank" 
+                                rel="noopener noreferrer">
+                            </a>
+                            <a 
+                                class="list-subtext" 
+                                id="rec-artist-<%= i %>" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                title="Go to Artist on Spotify">
+                            </a>
+                        </p>
+                        <div class="li-popularity" id="rec-popularity-<%= i %>">
+                            <span class="popularity highlighted"></span>
+                            <span class="popularity dimmed"></span>
+                        </div>
+                        <span class="duration" id="rec-duration-<%= i %>"></span>
+                    </li>
+                <% } %> 
+            </ul>
+            <button id="rec-refresh">Refresh</button>
+        </section>
+
+        <h4 class="filter-title">Recommendation Filters</h4>
+
+        <!-- Filters are created without EJS functionality due to the abundance of specific requirements in sliders -->
+        <form class="filters-container">
+            
+            <div class="filter-option">
+                <div class="slider-title-container">
+                    <p class="slider-title">Popularity</p>
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span class="tooltip">
+                        Popularity is calculated by algorithm and is based, in the most part, on the total number of plays the track has had and how recent those plays are.
+                    </span>
+                </div>
+                <div class="slider-container">
+                    <div class="toggle-container">
+                        <input type="checkbox" class="checkbox" id="popularity-check">
+                        <label for="popularity-check"></label>
+                        <div class="unselected"></div>
+                    </div>
+                    <input type="range" class="slider" id="popularity-slider">
+                    <input type="number" class="slider-value" value="50"></input>
+                </div>
+            </div>
+
+            <div class="filter-option">
+                <div class="slider-title-container">
+                    <p class="slider-title">Danceability</p>
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span class="tooltip">
+                        Danceability describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity.
+                    </span>
+                </div>
+                <div class="slider-container">
+                    <div class="toggle-container">
+                        <input type="checkbox" class="checkbox" id="danceability-check">
+                        <label for="danceability-check"></label>
+                        <div class="unselected"></div>
+                    </div>
+                    <input type="range" class="slider" id="danceability-slider">
+                    <input type="number" class="slider-value" value="50"></input>
+                </div>
+            </div>
+
+            <div class="filter-option">
+                <div class="slider-title-container">
+                    <p class="slider-title">Valence</p>
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span class="tooltip">
+                        Valence describes the musical positiveness conveyed by a track. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry).
+                    </span>
+                </div>
+                <div class="slider-container">
+                    <div class="toggle-container">
+                        <input type="checkbox" class="checkbox" id="valence-check">
+                        <label for="valence-check"></label>
+                        <div class="unselected"></div>
+                    </div>
+                    <input type="range" class="slider" id="valence-slider">
+                    <input type="number" class="slider-value" value="50"></input>
+                </div>
+            </div>
+
+            <div class="filter-option">
+                <div class="slider-title-container">
+                    <p class="slider-title">Tempo</p>
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span class="tooltip">
+                        The overall estimated tempo of a track in beats per minute (BPM). In musical terminology, tempo is the speed or pace of a given piece and derives directly from the average beat duration.
+                    </span>
+                </div>
+                <div class="slider-container">
+                    <div class="toggle-container">
+                        <input type="checkbox" class="checkbox" id="tempo-check">
+                        <label for="tempo-check"></label>
+                        <div class="unselected"></div>
+                    </div>
+                    <input type="range" min="40" max="200" class="slider" id="tempo-slider">
+                    <input type="number" class="slider-value" value="120"></input>
+                </div>
+            </div>
+
+            <div class="filter-option">
+                <div class="slider-title-container">
+                    <p class="slider-title">Energy</p>
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span class="tooltip">
+                        Energy represents intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. Perceptual features contributing to this attribute include dynamic range, perceived loudness, timbre, onset rate, and general entropy.
+                    </span>
+                </div>
+                <div class="slider-container">
+                    <div class="toggle-container">
+                        <input type="checkbox" class="checkbox" id="energy-check">
+                        <label for="energy-check"></label>
+                        <div class="unselected"></div>
+                    </div>
+                    <input type="range" class="slider" id="energy-slider">
+                    <input type="number" class="slider-value" value="50"></input>
+                </div>
+            </div>
+
+            <div class="filter-option">
+                <div class="slider-title-container">
+                    <p class="slider-title">Mode</p>
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span class="tooltip">
+                        Mode indicates the modality (major or minor) of a track, the type of scale from which its melodic content is derived. Major is represented by 1 and minor is 0.
+                    </span>
+                </div>
+                <div class="slider-container">
+                    <div class="toggle-container">
+                        <input type="checkbox" class="checkbox" id="mode-check">
+                        <label for="mode-check"></label>
+                        <div class="unselected"></div>
+                    </div>
+                    <input type="range" min="0" max="1" class="slider" id="mode-slider">
+                    <input type="number" class="slider-value" value="1"></input>
+                </div>
+            </div>
+        </form>
+    </main>
+</body>
+</html>

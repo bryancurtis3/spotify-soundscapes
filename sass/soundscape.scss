@@ -85,11 +85,6 @@ main {
         border: none;
         color: rgb(45, 45, 45);
         font-weight: 600;
-
-        &:hover {
-            transform: scale(.98);
-
-        }
     }
 }
 
@@ -97,7 +92,7 @@ main {
     font-size: 32px;
     font-weight: 600;
     text-align: center;
-    padding: 10px 0 15px 0;
+    padding: 10px 0;
 }
 
 .chart-container {
@@ -304,12 +299,16 @@ li {
     }
 }
 
+#ratings-title {
+    padding-top: 15px;
+}
+
 .all-ratings {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     row-gap: 20px;
     place-items: center;
-    padding-top: 20px;
+    padding-top: 15px;
     width: 100%;
     // max-width: 100vw;
 
@@ -359,7 +358,7 @@ li {
 
 .recs-container {
     width: 100%;
-    padding-top: 25px;
+    padding-top: 30px;
 
     ul {
         margin: 0;
@@ -378,6 +377,117 @@ li {
     
         &:hover {
             color: white;
+        }
+    }
+}
+
+.search {
+    display: grid;
+    place-items: center;
+    position: relative;
+    width: 100%;
+
+    .search-bar {
+        position: relative;
+        width: 75%;
+        margin: 10px;
+        z-index: 3;
+    
+        .fa-solid {
+            position: absolute;
+            font-size: 20px;
+        }
+    
+        .fa-magnifying-glass {
+            top: 15px;
+            left: 17px;
+        }
+    
+        .fa-x {
+            top: 16px;
+            right: 17px;
+            font-size: 16px;
+            display: none;
+        }
+    
+        #track-search {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 13px;
+            height: 48px;
+            width: 100%;
+            padding: 6px 47px;
+            background-color: rgb(65, 65, 65);
+            color: white;
+            border: none;
+            border-radius: 500px;
+            transition: .2s;
+    
+        
+            &:focus {
+                outline: none;
+                border: 2px solid white;
+            }
+    
+            &:hover {
+                background-color: lighten($dark-75, 5%);
+            }
+        
+            &::-webkit-search-cancel-button{
+                display: none;
+            }
+    
+            &:placeholder-shown {
+                text-overflow: ellipsis;
+            }
+        }
+    }
+
+    // #TODO Figure out how to appropriately show and hide results on click on and off, especially for before any results exist
+    .search-results {
+        position: absolute;
+        top: 34px;
+        background-color: rgb(55, 55, 55);
+        box-shadow: rgba(0, 0, 0, 0.5) 0 4px 15px;
+        display: none;
+        padding: 35px 5px 5px 5px;
+        margin: 0;
+        width: 75%;
+    
+        // Modified styling for search result li's
+        li {
+            grid-template-columns: 55px 1fr 30px;
+            position: relative;
+    
+            .fa-play {
+                position: absolute;
+                top: 19px;
+                left: 22px;
+                z-index: 2;
+            }
+    
+            &:hover {
+                img {
+                    filter: brightness(30%);
+                }
+            }
+        }
+    }
+}
+
+.add-to-seeds, .remove-seed {
+    justify-self: center;
+    position: relative;
+    cursor: pointer;
+
+    &:hover {
+        .tooltip {
+            opacity: 1;
+            visibility: visible;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            position: absolute;
+            right: 15px;
         }
     }
 }
@@ -653,6 +763,10 @@ li {
 
     .li-text {
         grid-column: span 2;
+    }
+
+    .search-li {
+        grid-column: span 1;
     }
     
     .legend-popularity, .li-popularity {

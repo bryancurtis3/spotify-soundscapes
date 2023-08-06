@@ -117,7 +117,7 @@ app.get('/callback', function(req, res) {
 
                 // NOTE This is essential currently (?)
                 // we can also pass the token to the browser to make requests from there
-                res.redirect('/soundscape/#' +
+                res.redirect('/search/#' +
                     querystring.stringify({
                         access_token: access_token,
                         refresh_token: refresh_token
@@ -140,6 +140,10 @@ app.get('/', function(req, res) {
 
 app.get('/soundscape', function(req, res) {
     res.render(path.join(__dirname, 'soundscape.ejs'));
+});
+
+app.get('/search', function(req, res) {
+    res.render(path.join(__dirname, 'search.ejs'));
 });
 
 // NOTE Not in use while token_refresher is commented out in apiStuff ***
