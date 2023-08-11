@@ -255,20 +255,33 @@ if (access_token && !error) {
         // $('.see-more-artists').click({type: 'artists'}, seeMoreLess);
         // $('.see-more-songs').click({type: 'songs'}, seeMoreLess);
 
-        const removeSeed = function removeSeed(event) {
+        /**
+         * Adds new seed ID to the list of up to 5 IDs
+         * @param {array} event jQuery event variable holds the seed, specified in click function of element
+         */
+        const addSeed = function addSeed(event) {
+            if (userSeeds.split(',').length < 6) {
+                userSeeds += event.data.seed + ',';
 
+                updateSeeds(event.data);
+
+                console.log(event.data);
+            };
+        };
+
+        const removeSeed = function removeSeed(event) {
             const seed = event.data.seed + ',';
             userSeeds = userSeeds.replace(seed, '');
         };
 
         let j = 0;
 
-
         let seedArray = [];
         const updateSeeds = function updateSeeds(seedData) {
 
-            // If a track is set to be removed, take away the removed seed object, place a new, blank object on the end to overwrite what was there
+            // If (a track is set to be removed), take away the removed seed object, place a new, blank object on the end to overwrite what was there
             // Else write the seed data into the array
+            console.log ('j = ' + j)
             if (seedData.data) {
                 seedArray.splice(seedData.data.index, 1);
 
@@ -276,9 +289,14 @@ if (access_token && !error) {
                     seed: '', image: '', artist: '', name: '', uri: ''
                 }        
 
+                // Manually iteratae j and stop displaying the last seed on the list
                 j--;
+                $(`#seed-li-${j}`).css('display', 'none');
+
             } else {
                 seedArray [j] = seedData;
+                $(`#seed-li-${j}`).css('display', 'grid');
+
             };
             console.log(seedArray);
 
@@ -287,6 +305,8 @@ if (access_token && !error) {
             for (i = 0; i < seedArray.length; i++) {
                 
                 let { seed, image, artist, name, uri} = seedArray[i];
+                console.log("here " + i)
+                console.log(seedArray[i])
                 
                 // Unbinding here prevents click events stacking on elements when refreshed
                 $(`#seed-li-${i}`).unbind();
@@ -375,19 +395,6 @@ if (access_token && !error) {
         seedTracks = seedTracks.slice(0, -1);
 
         /**
-         * Adds new seed ID to the list of up to 5 IDs
-         * @param {array} event jQuery event variable holds the seed, specified in click function of element
-         */
-        const addSeed = function addSeed(event) {
-
-            if (userSeeds.split(',').length < 6) {
-                userSeeds += event.data.seed + ',';
-
-                updateSeeds(event.data);
-            };
-        };
-
-        /**
          * Handles updating of search UI with new data after submitSearch runs
          * @param {array} searchData The array of track objects returned after the API call
          */
@@ -419,7 +426,8 @@ if (access_token && !error) {
                         image: trackResult.album.images[2].url, 
                         artist: trackResult.artists[0].name,
                         name: trackResult.name,
-                        uri: trackResult.uri
+                        uri: trackResult.uri,
+                        index: i
                     }, addSeed);
 
                 } else {
