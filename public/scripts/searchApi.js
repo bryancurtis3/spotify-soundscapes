@@ -621,7 +621,7 @@ if (access_token && !error) {
 
     $('#swap').on('click', function() {
         const url = window.location.href
-        .replace('search', 'soundscape');
+        .replace('/search', '/soundscape');
 
         location.href = url;
     });

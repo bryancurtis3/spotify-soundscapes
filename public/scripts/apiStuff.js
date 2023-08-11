@@ -1116,7 +1116,7 @@ if (access_token && !error) {
 
     $('#swap').on('click', function() {
         const url = window.location.href
-        .replace('soundscape', 'search');
+        .replace('/soundscape', '/search');
 
         location.href = url;
     });
